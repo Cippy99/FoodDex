@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/inventory_tab"
+        android:title="Inventario"
+        android:icon="@drawable/inventory_icon_selector" />
+
+    <item android:id="@+id/recipes_tab"
+        android:title="Ricette"
+        android:icon="@drawable/recipes_icon_selector" />
+
+    <item android:id="@+id/meals_tab"
+        android:title="Pasti"
+        android:icon="@drawable/meals_icon_selector" />
+
+    <item android:id="@+id/settings_tab"
+        android:title="Impostazioni"
+        android:icon="@drawable/settings_icon_selector" />
+
+</menu>
