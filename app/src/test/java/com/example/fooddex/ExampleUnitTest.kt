@@ -1,4 +1,4 @@
-package com.example.groceriesinventory
+package com.example.fooddex
 
 import org.junit.Test
 

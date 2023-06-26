@@ -1,4 +1,4 @@
-package com.example.groceriesinventory
+package com.example.fooddex
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
