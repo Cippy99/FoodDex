@@ -2,26 +2,38 @@ package com.example.fooddex
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import androidx.fragment.app.Fragment
 import com.example.fooddex.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView) as NavHostFragment
-        navController = navHostFragment.navController
+
         val bottomNavigationView = binding.bottomNavigationView
-        bottomNavigationView.setupWithNavController(navController)
+
+        bottomNavigationView.setOnItemSelectedListener {
+            when(it.itemId){
+                R.id.inventoryFragment -> replaceFragment(InventoryFragment())
+                R.id.mealsFragment -> replaceFragment(MealsFragment())
+                R.id.recipesFragment -> replaceFragment(RecipesFragment())
+                R.id.settingsFragment -> replaceFragment(SettingsFragment())
+            }
+            true
+        }
 
         val view = binding.root
         setContentView(view)
+    }
+
+    private fun replaceFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fragmentContainerView, fragment)
+            commit()
+        }
     }
 
 }
