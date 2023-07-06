@@ -38,10 +38,12 @@ class SignUp : AppCompatActivity() {
             val email = tietEmail.text.toString()
             val password = tietPassword.text.toString()
 
-            createAccount(name, email, password)
+            clearErrors()
+
+            if (validate(name, email, password)){
+                createAccount(name, email, password)
+            }
         }
-
-
     }
 
     private fun createAccount(name:String, email: String, password: String){
@@ -63,5 +65,32 @@ class SignUp : AppCompatActivity() {
     private fun addUserToDatabase(name: String, email: String, uid: String) {
         dbRef = FirebaseDatabase.getInstance().reference
         dbRef.child("user").child(uid).setValue(User(name, email, uid))
+    }
+
+    private fun validate(name: String?, email: String?, password: String?): Boolean{
+        var ok = true
+
+        if (name.isNullOrEmpty()){
+            ok = false
+            binding.tilName.error = getString(R.string.empty_name)
+        }
+
+        if (email.isNullOrEmpty()){
+            ok = false
+            binding.tilEmail.error = getString(R.string.empty_email)
+        }
+
+        if (password.isNullOrEmpty()){
+            ok = false
+            binding.tilPassword.error = getString(R.string.empty_password)
+        }
+
+        return ok
+    }
+
+    private fun clearErrors() {
+        binding.tilEmail.error = null
+        binding.tilPassword.error = null
+        binding.tilName.error = null
     }
 }

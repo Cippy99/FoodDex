@@ -47,17 +47,55 @@ class Login : AppCompatActivity() {
         }
     }
 
-    private fun login(email: String, password: String){
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful){
-                    val intent = Intent(this@Login, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                }
-                else{
-                    Toast.makeText(this@Login, "Errore nel Login", Toast.LENGTH_LONG).show()
-                }
-            }
+    override fun onStart() {
+        super.onStart()
+
+        val currentUser = auth.currentUser
+        if (currentUser != null){
+            goToMainActivity()
+        }
     }
+
+    private fun login(email: String, password: String){
+        clearErrors()
+        if (validate(email, password)){
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful){
+                        goToMainActivity()
+                    }
+                    else{
+                        Toast.makeText(this@Login, "Errore nel Login, controlla le credenziali", Toast.LENGTH_LONG).show()
+                    }
+                }
+        }
+
+    }
+
+    private fun clearErrors() {
+        binding.tilEmail.error = null
+        binding.tilPassword.error = null
+    }
+
+    private fun goToMainActivity(){
+        val intent = Intent(this@Login, MainActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun validate(email: String?, password: String?): Boolean{
+        var ok = true
+        if (email.isNullOrEmpty()){
+            ok = false
+            binding.tilEmail.error = getString(R.string.empty_email)
+        }
+
+        if (password.isNullOrEmpty()){
+            ok = false
+            binding.tilPassword.error = getString(R.string.empty_password)
+        }
+
+        return ok
+    }
+
 }
