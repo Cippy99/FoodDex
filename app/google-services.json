@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "934861187849",
+    "firebase_url": "https://fooddex-bd88a-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "fooddex-bd88a",
     "storage_bucket": "fooddex-bd88a.appspot.com"
   },

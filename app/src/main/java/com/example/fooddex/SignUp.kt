@@ -52,7 +52,7 @@ class SignUp : AppCompatActivity() {
                 if (task.isSuccessful){
                     addUserToDatabase(name, email, auth.currentUser?.uid!!)
 
-                    val intent = Intent(this@SignUp, MainActivity::class.java,)
+                    val intent = Intent(this@SignUp, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 }
@@ -64,7 +64,7 @@ class SignUp : AppCompatActivity() {
 
     private fun addUserToDatabase(name: String, email: String, uid: String) {
         dbRef = FirebaseDatabase.getInstance().reference
-        dbRef.child("user").child(uid).setValue(User(name, email, uid))
+        dbRef.child("users").child(uid).setValue(User(name, email, uid))
     }
 
     private fun validate(name: String?, email: String?, password: String?): Boolean{

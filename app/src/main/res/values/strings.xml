@@ -7,4 +7,17 @@
     <string name="empty_email">La mail non può essere vuota</string>
     <string name="empty_password">La password non può essere vuota</string>
     <string name="empty_name">Il nome non può essere vuoto</string>
+    <string name="family_settings">Impostazioni Famiglia</string>
+    <string name="join_family">Unisciti ad una famiglia</string>
+    <string name="family_code">Codice Famiglia</string>
+    <string name="join">Unisciti</string>
+    <string name="create_family">Crea una famiglia</string>
+    <string name="create">Crea</string>
+    <string name="family_name">Nome Famiglia</string>
+    <string name="family_code_empty">Il codice non può essere vuoto</string>
+    <string name="family_code_length_6">Il codice deve avere 6 lettere</string>
+    <string name="family_code_not_exists">Il codice famiglia non esiste</string>
+    <string name="family">Famiglia</string>
+    <string name="code">Codice</string>
+    <string name="members">Membri</string>
 </resources>

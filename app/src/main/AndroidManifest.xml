@@ -13,18 +13,24 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".SignUp"
-            android:screenOrientation="portrait"
-            android:configChanges="keyboardHidden|orientation"
+            android:name=".NoFamilySettingActivity"
             android:exported="false" />
+        <activity
+            android:name=".FamilySettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignUp"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
             android:exported="true" />
         <activity
             android:name=".Login"
-            android:screenOrientation="portrait"
             android:configChanges="keyboardHidden|orientation"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

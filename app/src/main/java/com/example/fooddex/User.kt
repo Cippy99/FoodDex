@@ -1,10 +1,11 @@
 package com.example.fooddex
 
-class User (name: String?, email: String?, uid: String?) {
+class User (name: String, email: String, uid: String) {
 
-    var name: String? = null
-    var email: String? = null
-    var uid: String? = null
+    var name: String
+    var email: String
+    var uid: String
+    var familyId: String? = null
 
 
     init{

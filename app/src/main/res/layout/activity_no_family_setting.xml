@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NoFamilySettingActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            style="@style/Widget.Material3.Toolbar.OnSurface"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:title="@string/family_settings" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/joinTitle"
+                style="@style/TextAppearance.Material3.TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/join_family"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilFamilyCode"
+                android:layout_width="245dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/family_code"
+                app:layout_constraintEnd_toEndOf="@+id/joinTitle"
+                app:layout_constraintStart_toStartOf="@+id/joinTitle"
+                app:layout_constraintTop_toBottomOf="@id/joinTitle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tietFamilyCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnJoin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="15dp"
+                android:text="@string/join"
+                app:layout_constraintEnd_toEndOf="@+id/tilFamilyCode"
+                app:layout_constraintStart_toStartOf="@+id/tilFamilyCode"
+                app:layout_constraintTop_toBottomOf="@+id/tilFamilyCode" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/div"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintEnd_toEndOf="@+id/btnJoin"
+                app:layout_constraintStart_toStartOf="@+id/btnJoin"
+                app:layout_constraintTop_toBottomOf="@id/btnJoin" />
+
+            <TextView
+                android:id="@+id/createTitle"
+                style="@style/TextAppearance.Material3.TitleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/create_family"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/div" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilFamilyName"
+                android:layout_width="245dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/family_name"
+                app:layout_constraintEnd_toEndOf="@+id/createTitle"
+                app:layout_constraintStart_toStartOf="@+id/createTitle"
+                app:layout_constraintTop_toBottomOf="@id/createTitle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tietFamilyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/btnCreate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="15dp"
+                android:text="@string/create"
+                app:layout_constraintEnd_toEndOf="@+id/tilFamilyName"
+                app:layout_constraintStart_toStartOf="@+id/tilFamilyName"
+                app:layout_constraintTop_toBottomOf="@+id/tilFamilyName" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
