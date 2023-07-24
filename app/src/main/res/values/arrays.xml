@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="UdM">
+        <item>@string/grams</item>
+        <item>litri</item>
+        <item>pezzi</item>
+    </string-array>
+</resources>

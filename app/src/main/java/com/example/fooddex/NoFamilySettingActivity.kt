@@ -11,6 +11,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
 import kotlin.random.Random
 
 class NoFamilySettingActivity : AppCompatActivity() {
@@ -49,8 +51,12 @@ class NoFamilySettingActivity : AppCompatActivity() {
             }else if (code.length != 6){
                 tilCode.error = getString(R.string.family_code_length_6)
             }
-            else if(!exists(code)){
+            else if(!runBlocking { exists(code) }){
                 tilCode.error = getString(R.string.family_code_not_exists)
+            }
+            else{
+                //Join the family
+                //Finish Activity
             }
         }
 
@@ -62,7 +68,8 @@ class NoFamilySettingActivity : AppCompatActivity() {
             else{
                 //Create new Family and save to db
                 val creatorId = auth.currentUser?.uid!!
-                val family = Family(name, generateUniqueCode(), creatorId , listOf(creatorId))
+                val familyCode = runBlocking { generateUniqueCode() }
+                val family = Family(name, familyCode, creatorId , listOf(creatorId))
 
                 dbReference.child("families").child(family.id).setValue(family)
 
@@ -75,11 +82,13 @@ class NoFamilySettingActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    private fun exists(code: String): Boolean {
-        return false
+    private suspend fun exists(code: String): Boolean {
+        val famRef = dbReference.child("families")
+        val snapshot = famRef.child(code.uppercase()).get().await()
+        return snapshot.exists()
     }
 
-    private fun generateUniqueCode(): String {
+    private suspend fun generateUniqueCode(): String {
         val characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         val codeLength = 6
         val random = Random.Default
