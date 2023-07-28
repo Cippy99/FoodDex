@@ -68,10 +68,8 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
 
                     if (familyId != null) {
 
-                        val productRef = dbReference.child("products").child(familyId)
-
-                        productRef.child(product.id).setValue(product)
-
+                        val recipeRef = dbReference.child("recipes").child(familyId)
+                        recipeRef.child(product.id).setValue(product)
                         notifyItemChanged(adapterPosition)
 
                     } else {
