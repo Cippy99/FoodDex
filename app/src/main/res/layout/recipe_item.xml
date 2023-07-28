@@ -16,7 +16,7 @@
             <ImageView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:id="@+id/ivProductIcon"
+                android:id="@+id/RecipeIcon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -25,31 +25,21 @@
                 />
 
             <TextView
-                android:id="@+id/tvName"
+                android:id="@+id/recipeName"
+                style="@style/TextAppearance.Material3.TitleMedium"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/ivProductIcon"
-                app:layout_constraintTop_toTopOf="@id/ivProductIcon"
-                app:layout_constraintBottom_toTopOf="@id/tvExpiration"
                 android:layout_marginStart="16dp"
-                android:text="Prodotto"
-                app:layout_constraintEnd_toStartOf="@id/layoutButtons"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="5dp"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:layout_marginEnd="5dp"
+                android:text="Ricetta"
                 app:layout_constrainedWidth="true"
-                style="@style/TextAppearance.Material3.TitleMedium"/>
-
-            <TextView
-                android:id="@+id/tvExpiration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/ivProductIcon"
-                app:layout_constraintTop_toBottomOf="@id/tvName"
-                app:layout_constraintBottom_toBottomOf="@id/ivProductIcon"
-                android:layout_marginStart="16dp"
-                android:text="x giorni"
-                style="@style/TextAppearance.Material3.LabelMedium"/>
+                app:layout_constraintEnd_toStartOf="@id/layoutButtons"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@id/RecipeIcon"
+                app:layout_constraintTop_toTopOf="@id/RecipeIcon" />
 
             <LinearLayout
                 android:id="@+id/layoutButtons"
@@ -62,7 +52,7 @@
                 android:layout_marginEnd="10dp">
 
                 <Button
-                    android:id="@+id/btnPlus"
+                    android:id="@+id/btnCucina"
                     style="?attr/materialIconButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
