@@ -6,15 +6,21 @@ class Recipe() {
     var imgRef: String = ""
     var category: String = ""
     var nOfPerson: Int = 0
-    var products: MutableList<Product>? = null
+    var ingredients: MutableList<Product>? = null
 
     constructor(id: String, name: String, imgRef: String, category: String,
-                nOfPerson: Int, products: MutableList<Product>) : this() {
+                nOfPerson: Int, ingredients: MutableList<Product>) : this() {
         this.name = name
         this.id = id
         this.imgRef = imgRef
         this.category = category
         this.nOfPerson = nOfPerson
-        this.products = products
+        this.ingredients = ingredients
     }
+
+    // domande GABIO
+    // a cosa servono gli adapter?
+    // giro fragment-adapter-activity-view?
+
+
 }

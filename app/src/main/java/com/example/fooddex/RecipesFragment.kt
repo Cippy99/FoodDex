@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.example.fooddex.databinding.FragmentRecipesBinding
 import com.google.firebase.database.ktx.database
@@ -19,6 +20,7 @@ class RecipesFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var _binding: FragmentRecipesBinding?= null
     private var recipesList = mutableListOf<Recipe>()
+    private lateinit var recyclerView: RecyclerView
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -37,26 +39,12 @@ class RecipesFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser!!.uid
         val dbref = Firebase.database.reference
+
+
+
+
         // da finire
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment RecipesFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            RecipesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }
