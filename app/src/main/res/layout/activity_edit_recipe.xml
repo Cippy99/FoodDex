@@ -12,12 +12,12 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
+            style="@style/Widget.Material3.Toolbar.OnSurface"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            style="@style/Widget.Material3.Toolbar.OnSurface"
+            app:menu="@menu/check_only_menu"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:title="@string/add_product"
-            app:menu="@menu/check_only_menu"/>
+            app:title="@string/add_recipe" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -27,12 +27,12 @@
                 android:id="@+id/tilName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
                 android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="50dp"
                 android:hint="@string/product_name"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tietRecipeName"
@@ -42,68 +42,86 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:layout_marginTop="20dp"
+                android:hint="@string/category"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tilName">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tietCategory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilPortion"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginLeft="30dp"
+                android:layout_marginTop="20dp"
                 android:hint="@string/portion"
-                app:layout_constraintTop_toBottomOf="@id/tilName"
                 app:layout_constraintEnd_toStartOf="@id/tilPortionUM"
+                app:layout_constraintHorizontal_weight="0.55"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintHorizontal_weight="0.55">
+                app:layout_constraintTop_toBottomOf="@+id/tilCategory">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tietRecipePortion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:layout_marginRight="5dp" />
+                    android:layout_marginRight="5dp"
+                    android:inputType="number" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilPortionUM"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="30dp"
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:hint="@string/unit"
-                app:layout_constraintTop_toBottomOf="@id/tilName"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="0.45"
                 app:layout_constraintStart_toEndOf="@id/tilPortion"
-                app:layout_constraintHorizontal_weight="0.45">
+                app:layout_constraintTop_toBottomOf="@+id/tilCategory">
 
                 <AutoCompleteTextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
-                    android:text="@string/grams"
-                    app:simpleItems="@array/UdM"
-                    />
+                    android:text="@string/person"
+                    app:simpleItems="@array/UdM" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="16dp"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    />
+                    android:padding="16dp"
+                    android:textAppearance="?attr/textAppearanceTitleMedium" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.Material3.CardView.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/tilPortion"
-                android:layout_marginTop="20dp"
                 android:layout_marginHorizontal="30dp"
-                style="@style/Widget.Material3.CardView.Outlined"
+                android:layout_marginTop="55dp"
                 android:padding="10dp"
                 app:cardBackgroundColor="@android:color/transparent"
-                app:strokeColor="?attr/colorOutline">
+                app:layout_constraintTop_toBottomOf="@+id/tilPortion"
+                app:strokeColor="?attr/colorOutline"
+                tools:layout_editor_absoluteX="30dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -115,7 +133,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:text="@string/expirations"
+                        android:text="@string/ingredients"
                         app:layout_constraintBottom_toBottomOf="@+id/btnAddIngredients"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/btnAddIngredients" />
@@ -125,22 +143,22 @@
                         style="?attr/materialIconButtonOutlinedStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
                         app:icon="@drawable/baseline_add_24"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="1"
                         app:layout_constraintStart_toEndOf="@+id/tvIngredients"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvExpirations"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/btnAddIngredients"
-                        app:layout_constraintStart_toStartOf="parent"
                         android:layout_marginTop="16dp"
-                        app:layoutManager="LinearLayoutManager"/>
+                        app:layoutManager="LinearLayoutManager"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/btnAddIngredients" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

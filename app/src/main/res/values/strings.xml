@@ -29,4 +29,9 @@
     <string name="expirations">Scadenze</string>
     <string name="amount">Quantità</string>
     <string name="expiration_date">Data di scadenza</string>
+    <string name="add_recipe">Aggiungi Ricetta</string>
+    <string name="person">persone</string>
+    <string name="ingredients">ingredienti</string>
+    <string name="category">Categoria</string>
+
 </resources>
