@@ -8,11 +8,11 @@ class Recipe() {
     var nOfPerson: Int = 0
     var ingredients: MutableList<Product>? = null
 
-    constructor(id: String, name: String, imgRef: String, category: String,
+    constructor(id: String, name: String, category: String,
                 nOfPerson: Int, ingredients: MutableList<Product>) : this() {
         this.name = name
         this.id = id
-        this.imgRef = imgRef
+        //this.imgRef = imgRef
         this.category = category
         this.nOfPerson = nOfPerson
         this.ingredients = ingredients
