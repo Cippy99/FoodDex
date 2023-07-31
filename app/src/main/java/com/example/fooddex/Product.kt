@@ -11,15 +11,18 @@ class Product() {
     var portionSize: Double = 0.0
     var unitOfMeasure: String = ""
     var expirations: MutableList<ExpirationDate> = mutableListOf()
+    @DrawableRes
+    var iconId = R.drawable.ic_grocery
 
     constructor(
         id: String, name: String, portionSize: Double, unitOfMeasure: String,
-        expirations: MutableList<ExpirationDate>) : this() {
+        expirations: MutableList<ExpirationDate>, @DrawableRes iconId: Int) : this() {
         this.id = id
         this.name = name
         this.portionSize = portionSize
         this.unitOfMeasure = unitOfMeasure
         this.expirations = expirations
+        this.iconId = iconId
     }
 
     @Exclude

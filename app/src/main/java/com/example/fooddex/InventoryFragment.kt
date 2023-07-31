@@ -50,7 +50,7 @@ class InventoryFragment : Fragment() {
         recyclerView = binding.rvProducts
 
         val itemDecorator = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.rv_spacing)!!)
+        itemDecorator.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.rv_spacing_8dp)!!)
         recyclerView.addItemDecoration(itemDecorator)
 
 

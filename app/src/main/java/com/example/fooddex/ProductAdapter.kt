@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
@@ -36,6 +37,7 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
         private val tvPortionsInUdM: TextView = itemView.findViewById(R.id.tvPortionsInUdM)
         private val btnPlus: Button = itemView.findViewById(R.id.btnPlus)
         private val btnMinus: Button = itemView.findViewById(R.id.btnMinus)
+        private val ivIcon: ImageView = itemView.findViewById(R.id.ivProductIcon)
 
         private lateinit var selectedDate: LocalDate
         private lateinit var product: Product
@@ -50,7 +52,9 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
 
             tvName.text = product.name
             tvPortions.text = product.getTotalAmount().toString()
-            tvPortionsInUdM.text = "${product.getTotalSize().toString()} ${getUoMShort(product)}"
+            tvPortionsInUdM.text = "${product.getTotalSize()} ${getUoMShort(product)}"
+            ivIcon.setImageResource(product.iconId)
+
             val daysUntilExpiration = product.getDaysUntilExpiration()
             
             val textExpiration: String
@@ -83,6 +87,8 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
             else{
                 tvExpiration.setTextColor(MaterialColors.getColor(itemView, com.google.android.material.R.attr.colorOnPrimarySurface))
             }
+
+            updateMinusButton()
 
         }
 
@@ -154,6 +160,10 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
             updateProduct()
         }
 
+        private fun updateMinusButton(){
+            btnMinus.isEnabled = product.getTotalAmount() > 0
+        }
+
         private fun updateProduct(){
             val userRef = dbReference.child("users").child(auth.currentUser?.uid!!)
 
@@ -167,6 +177,7 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
 
                         productRef.child(product.id).setValue(product)
 
+                        updateMinusButton()
                         notifyItemChanged(adapterPosition)
 
                     } else {
@@ -179,8 +190,6 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
                 }
             })
         }
-
-
 
         private fun getUoMShort(product: Product): String {
             val udMArray = itemView.resources.getStringArray(R.array.UdM)
