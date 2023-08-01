@@ -3,14 +3,10 @@ package com.example.fooddex
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.widget.AutoCompleteTextView
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fooddex.databinding.ActivityEditProductBinding
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -19,17 +15,11 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
 
 class EditProductActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditProductBinding
-    private lateinit var tietExpirationDate: TextInputEditText
-    private lateinit var tietAmount: TextInputEditText
     private lateinit var recyclerView: RecyclerView
-    private var selectedDate: LocalDate = LocalDate.now()
     private var allExpirationDates = mutableListOf<ExpirationDate>()
     private var productId: String? = null
     @DrawableRes private var iconId: Int = IconData.iconList[0].iconId
@@ -76,51 +66,12 @@ class EditProductActivity : AppCompatActivity() {
             }
         }
 
-        //Inflate dialog view
-        val dialogView = LayoutInflater.from(this@EditProductActivity).inflate(R.layout.add_expiration_dialog, null)
-        tietExpirationDate = dialogView.findViewById(R.id.tietExpirationDate)
-        tietAmount = dialogView.findViewById(R.id.tietAmount)
-
-        //Create DatePicker
-        val datePicker = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Seleziona Data")
-            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-            .build()
-        datePicker.addOnPositiveButtonClickListener { selection ->
-            val selectedDateInMillis = selection ?: return@addOnPositiveButtonClickListener
-            val c = Calendar.getInstance()
-            c.timeInMillis = selectedDateInMillis
-
-            selectedDate = LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH))
-            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yy")
-            tietExpirationDate.setText(selectedDate.format(formatter))
-        }
-
-        //Open Datepicker when click on EditText
-        tietExpirationDate.setOnClickListener {
-            datePicker.show(supportFragmentManager, "tag")
-        }
-
-        //Create Dialog
-        val dialog = MaterialAlertDialogBuilder(this@EditProductActivity)
-            .setTitle("Aggiungi Scadenza")
-            .setView(dialogView)
-            .setPositiveButton("Conferma") { dialog, _ ->
-                val amountText = tietAmount.text.toString()
-                val amount = if (amountText.isNotEmpty()) amountText.toInt() else 0
-                allExpirationDates.add(ExpirationDate(selectedDate, amount))
-                tietExpirationDate.text = null
-                tietAmount.text = null
-                updateRecyclerView()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancella") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .create()
-
         //Open Dialog When click on AddExpiration
         binding.btnAddExpiration.setOnClickListener {
+            val dialog = ExpirationDialog(this){expiration ->
+                allExpirationDates.add(expiration)
+                updateRecyclerView()
+            }
             dialog.show()
         }
 
@@ -129,8 +80,6 @@ class EditProductActivity : AppCompatActivity() {
         if(!productId.isNullOrEmpty()){
             retrieveProductAndFillFields(productId!!)
         }
-
-
     }
 
     private fun retrieveProductAndFillFields(productId: String){
@@ -179,6 +128,7 @@ class EditProductActivity : AppCompatActivity() {
         (binding.tilPortionUM.editText as AutoCompleteTextView).setText(product.unitOfMeasure, false)
         allExpirationDates = product.expirations
         binding.ivIcon.setImageResource(product.iconId)
+        iconId = product.iconId
         updateRecyclerView()
     }
 

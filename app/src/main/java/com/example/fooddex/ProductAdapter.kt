@@ -8,13 +8,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.color.MaterialColors
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,7 +19,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Calendar
 import kotlin.math.abs
 
 
@@ -39,7 +34,6 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
         private val btnMinus: Button = itemView.findViewById(R.id.btnMinus)
         private val ivIcon: ImageView = itemView.findViewById(R.id.ivProductIcon)
 
-        private lateinit var selectedDate: LocalDate
         private lateinit var product: Product
 
         val auth = Firebase.auth
@@ -94,64 +88,23 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
 
         init {
 
-            val dialogView = LayoutInflater.from(context).inflate(R.layout.add_expiration_dialog, null)
-            val tietExpirationDate: TextInputEditText = dialogView.findViewById(R.id.tietExpirationDate)
-            val tietAmount: TextInputEditText = dialogView.findViewById(R.id.tietAmount)
             val cardContainer: MaterialCardView = itemView.findViewById(R.id.cardContainer)
 
             cardContainer.setOnClickListener {
                 editProduct(adapterPosition)
             }
 
-            //Create DatePicker
-            val datePicker = MaterialDatePicker.Builder.datePicker()
-                .setTitleText("Seleziona Data")
-                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                .build()
-            datePicker.addOnPositiveButtonClickListener { selection ->
-                val selectedDateInMillis = selection ?: return@addOnPositiveButtonClickListener
-                val c = Calendar.getInstance()
-                c.timeInMillis = selectedDateInMillis
-
-                selectedDate = LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(
-                    Calendar.DAY_OF_MONTH))
-                val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yy")
-                tietExpirationDate.setText(selectedDate.format(formatter))
-            }
-
-            //Open Datepicker when click on EditText
-            tietExpirationDate.setOnClickListener {
-                datePicker.show((context as AppCompatActivity).supportFragmentManager, "tag")
-            }
-
-            //Create Dialog
-            val dialog = MaterialAlertDialogBuilder(tvName.context)
-                .setTitle("Aggiungi Scadenza")
-                .setView(dialogView)
-                .setPositiveButton("Conferma") { dialog, _ ->
-
-                    val amountText = tietAmount.text.toString()
-                    val amount = if (amountText.isNotEmpty()) amountText.toInt() else 0
-                    addExpiration(ExpirationDate(selectedDate, amount))
-                    dialog.dismiss()
-                }
-                .setNegativeButton("Cancella") { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .create()
-
             btnPlus.setOnClickListener {
+                val dialog = ExpirationDialog(context){expiration ->
+                    product.expirations.add(expiration)
+                    updateProduct()
+                }
                 dialog.show()
             }
 
             btnMinus.setOnClickListener {
                 removeOneItem()
             }
-        }
-
-        private fun addExpiration(expiration: ExpirationDate){
-            product.expirations.add(expiration)
-            updateProduct()
         }
 
         private fun removeOneItem(){
