@@ -7,6 +7,7 @@ class Recipe() {
     var category: String = ""
     var nOfPerson: Int = 0
     var ingredients: MutableList<Product>? = null
+    // associare quantità -> lista di coppie (pair)
 
     constructor(id: String, name: String, category: String,
                 nOfPerson: Int, ingredients: MutableList<Product>) : this() {
@@ -17,10 +18,4 @@ class Recipe() {
         this.nOfPerson = nOfPerson
         this.ingredients = ingredients
     }
-
-    // domande GABIO
-    // a cosa servono gli adapter?
-    // giro fragment-adapter-activity-view?
-
-
 }
