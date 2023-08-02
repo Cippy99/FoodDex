@@ -58,7 +58,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         app:tint="@color/material_on_surface_emphasis_medium"
-                        app:srcCompat="@drawable/chef"
+                        app:srcCompat="@drawable/baseline_chef_hat"
                         tools:ignore="UseAppTint" />
 
                     <TextView
