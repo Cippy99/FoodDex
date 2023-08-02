@@ -19,12 +19,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-
-/**
- * A simple [Fragment] subclass.
- * Use the [RecipesFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class RecipesFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var _binding: FragmentRecipesBinding?= null
