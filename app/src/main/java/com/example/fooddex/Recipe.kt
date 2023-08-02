@@ -1,21 +1,21 @@
 package com.example.fooddex
 
-import java.util.Date
-
 class Recipe() {
-
+    var id = "0"
     var name: String = ""
-    var id: String = ""
-    var creatorId: String = ""
-    var ingredients: List<Ingredient> = listOf()
-    var creationDate: Date?= null
+    var imgRef: String = ""
+    var category: String = ""
+    var nOfPerson: Int = 0
+    var ingredients: MutableList<Product>? = null
+    // associare quantità -> lista di coppie (pair)
 
-    constructor(name: String, code: String, creatorId: String, members: List<String>) : this() {
+    constructor(id: String, name: String, category: String,
+                nOfPerson: Int, ingredients: MutableList<Product>) : this() {
         this.name = name
-        this.creatorId = creatorId
-        this.id = code
-        this.ingredients =ingredients
-        this.creationDate = creationDate
-
+        this.id = id
+        //this.imgRef = imgRef
+        this.category = category
+        this.nOfPerson = nOfPerson
+        this.ingredients = ingredients
     }
 }

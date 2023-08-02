@@ -15,6 +15,8 @@ class MainActivity : AppCompatActivity() {
 
         val bottomNavigationView = binding.bottomNavigationView
 
+        replaceFragment(InventoryFragment())
+
         bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.inventoryFragment -> replaceFragment(InventoryFragment())

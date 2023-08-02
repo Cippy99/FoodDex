@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:id="@+id/ivProductIcon"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/ic_lemon"
+                android:layout_margin="10dp"
+                />
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/ivProductIcon"
+                app:layout_constraintTop_toTopOf="@id/ivProductIcon"
+                app:layout_constraintBottom_toTopOf="@id/tvExpiration"
+                android:layout_marginStart="16dp"
+                android:text="Prodotto"
+                app:layout_constraintEnd_toStartOf="@id/layoutButtons"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:layout_marginEnd="5dp"
+                app:layout_constrainedWidth="true"
+                style="@style/TextAppearance.Material3.TitleMedium"/>
+
+            <TextView
+                android:id="@+id/tvExpiration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/ivProductIcon"
+                app:layout_constraintTop_toBottomOf="@id/tvName"
+                app:layout_constraintBottom_toBottomOf="@id/ivProductIcon"
+                android:layout_marginStart="16dp"
+                android:text="x giorni"
+                style="@style/TextAppearance.Material3.LabelMedium"/>
+
+            <LinearLayout
+                android:id="@+id/layoutButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="10dp">
+
+                <Button
+                    android:id="@+id/btnMinus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?attr/materialIconButtonOutlinedStyle"
+                    app:icon="@drawable/baseline_remove_24"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="55dp"
+                    android:layout_height="match_parent"
+                    android:paddingVertical="5dp">
+
+                    <TextView
+                        android:id="@+id/tvPortions"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:text="1"
+                        style="@style/TextAppearance.Material3.LabelLarge"/>
+
+                    <TextView
+                        android:id="@+id/tvPortionsInUdM"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:text="100g"
+                        style="@style/TextAppearance.Material3.LabelSmall"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/btnPlus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?attr/materialIconButtonOutlinedStyle"
+                    app:icon="@drawable/baseline_add_24"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

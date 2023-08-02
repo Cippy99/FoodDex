@@ -20,4 +20,19 @@
     <string name="family">Famiglia</string>
     <string name="code">Codice</string>
     <string name="members">Membri</string>
+    <string name="add_product">Aggiungi Prodotto</string>
+    <string name="done">Fatto</string>
+    <string name="product_name">Nome Prodotto</string>
+    <string name="portion">Porzione</string>
+    <string name="unit">Unità</string>
+    <string name="grams">grammi</string>
+    <string name="expirations">Scadenze</string>
+    <string name="amount">Quantità</string>
+    <string name="expiration_date">Data di scadenza</string>
+    <string name="add_recipe">Aggiungi Ricetta</string>
+    <string name="person">persone</string>
+    <string name="ingredients">ingredienti</string>
+    <string name="category">Categoria</string>
+
+
 </resources>
