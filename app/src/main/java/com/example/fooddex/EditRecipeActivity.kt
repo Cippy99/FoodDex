@@ -46,6 +46,7 @@ class EditRecipeActivity : AppCompatActivity() {
         binding.topAppBar.setNavigationOnClickListener {
             finish()
         }
+        // salva la ricetta all'uscita dall'attività
         binding.topAppBar.setOnMenuItemClickListener{menuItem ->
             when(menuItem.itemId){
                 R.id.done ->{
@@ -53,7 +54,7 @@ class EditRecipeActivity : AppCompatActivity() {
                     val category = binding.tietCategory.text.toString()
                     val portion = binding.tietRecipePortion.text.toString().toInt()
                     val udm = (binding.tilPortionUM.editText as AutoCompleteTextView).text.toString()
-                    Log.d("Debug", "Saving Product")
+                    Log.d("Debug", "Saving Recipe")
                     saveRecipe(name, category, portion, udm, allIngredients)
                     true
                 }
@@ -162,6 +163,8 @@ class EditRecipeActivity : AppCompatActivity() {
 
     private fun updateRecyclerView() {
         // TODO
+        allIngredients.sortBy { it.second }
+
     }
 
 }
