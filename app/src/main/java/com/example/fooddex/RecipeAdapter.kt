@@ -38,9 +38,7 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
         private val recipeImg: ImageView = itemView.findViewById(R.id.RecipeIcon)
         //private val recipeNOfPerson: TextView = itemView.findViewById(R.id.recipeNOfPerson)
         private val btnCucina: Button = itemView.findViewById(R.id.btnCucina)
-
-        private lateinit var selectedDate: LocalDate
-        private lateinit var product: Product
+        private lateinit var recipe: Recipe
 
         val auth = Firebase.auth
         val dbReference = Firebase.database.reference
@@ -69,7 +67,7 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
                     if (familyId != null) {
 
                         val recipeRef = dbReference.child("recipes").child(familyId)
-                        recipeRef.child(product.id).setValue(product)
+                        recipeRef.child(recipe.id).setValue(recipe)
                         notifyItemChanged(adapterPosition)
 
                     } else {
@@ -102,7 +100,7 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
     // funzione che consente di modificare il prodotto quando schiaccio.
     // da modificare per adattarla a ricetta
     fun editRecipe(position: Int){
-        val intent = Intent(context, EditProductActivity::class.java)
+        val intent = Intent(context, EditRecipeActivity::class.java)
         intent.putExtra("recipeId", recipeList[position].id)
         context.startActivity(intent)
     }

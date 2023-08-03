@@ -6,11 +6,11 @@ class Recipe() {
     var imgRef: String = ""
     var category: String = ""
     var nOfPerson: Int = 0
-    var ingredients: MutableList<Product>? = null
-    // associare quantità -> lista di coppie (pair)
+    var ingredients: MutableList<Pair<Product,Int>>? = null
+    // uso pair per associare una quantità ad ogni ngrediente all'interno della ricetta.
 
     constructor(id: String, name: String, category: String,
-                nOfPerson: Int, ingredients: MutableList<Product>) : this() {
+                nOfPerson: Int, ingredients: MutableList<Pair<Product,Int>>) : this() {
         this.name = name
         this.id = id
         //this.imgRef = imgRef

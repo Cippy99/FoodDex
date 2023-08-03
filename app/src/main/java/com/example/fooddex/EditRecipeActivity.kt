@@ -31,27 +31,21 @@ class EditRecipeActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private var selectedDate: LocalDate = LocalDate.now()
     private var recipeId: String? = null
-    private var allIngredients = mutableListOf<Product>()
-
-
-
+    private var allIngredients = mutableListOf<Pair<Product,Int>>()
     private lateinit var auth: FirebaseAuth
     private lateinit var dbReference: DatabaseReference
 
+    // funzione che viene chiamata alla creazione della view dell'attività
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditRecipeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         auth = Firebase.auth
         dbReference = Firebase.database.reference
-
-        recyclerView = binding.rvExpirations
-
+        recyclerView = binding.rvRecipes
         binding.topAppBar.setNavigationOnClickListener {
             finish()
         }
-
         binding.topAppBar.setOnMenuItemClickListener{menuItem ->
             when(menuItem.itemId){
                 R.id.done ->{
@@ -123,7 +117,7 @@ class EditRecipeActivity : AppCompatActivity() {
         updateRecyclerView()
     }
 
-    private fun saveRecipe(name: String, category: String, portion: Int, udm: String, allIngredients: MutableList<Product>) {
+    private fun saveRecipe(name: String, category: String, portion: Int, udm: String, allIngredients: MutableList<Pair<Product,Int>>) {
         val userRef = dbReference.child("users").child(auth.currentUser?.uid!!)
 
         userRef.child("familyId").addListenerForSingleValueEvent(object : ValueEventListener {
