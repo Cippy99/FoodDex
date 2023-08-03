@@ -164,6 +164,9 @@ class EditRecipeActivity : AppCompatActivity() {
     private fun updateRecyclerView() {
         // TODO
         allIngredients.sortBy { it.second }
+        val adapter = RecipeIngredientsAdapter(allIngredients)
+        recyclerView.adapter = adapter
+        adapter.notifyDataSetChanged()
 
     }
 
