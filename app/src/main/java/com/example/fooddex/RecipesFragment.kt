@@ -55,6 +55,7 @@ class RecipesFragment : Fragment() {
 
         retrieveRecipesFromDb()
 
+        // alla pressione del bottone apre l'attività di editing/aggiunta ricetta
         binding.fabAddRecipe.setOnClickListener {
             val intent = Intent(activity, EditRecipeActivity::class.java)
             startActivity(intent)

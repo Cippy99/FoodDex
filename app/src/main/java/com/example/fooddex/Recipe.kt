@@ -9,6 +9,10 @@ class Recipe() {
     var ingredients: MutableList<Pair<Product,Int>>? = null
     // uso pair per associare una quantità ad ogni ngrediente all'interno della ricetta.
 
+    // TODO
+    // - far funzionare bottone cucina
+
+
     constructor(id: String, name: String, category: String,
                 nOfPerson: Int, ingredients: MutableList<Pair<Product,Int>>) : this() {
         this.name = name

@@ -177,6 +177,4 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
         intent.putExtra("productId", productList[position].id)
         context.startActivity(intent)
     }
-
-
 }
