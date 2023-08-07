@@ -33,6 +33,8 @@
     <string name="person">persone</string>
     <string name="ingredients">ingredienti</string>
     <string name="category">Categoria</string>
+    <string name="cook_meal">Cucina Piatto</string>
+    <string name="chef">Chef</string>
 
 
 </resources>

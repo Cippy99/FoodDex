@@ -12,7 +12,7 @@ class MealAdapter(var mealList: List<Meal>): RecyclerView.Adapter<MealAdapter.Me
     class MealViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
         private val mealName: TextView = itemView.findViewById(R.id.mealName)
-        private val mealImg : ImageView = itemView.findViewById(R.id.mealImg)
+        private val mealIcon: ImageView = itemView.findViewById(R.id.MealIcon)
         private val mealTime : TextView = itemView.findViewById(R.id.mealTime)
         private val mealChef : TextView = itemView.findViewById(R.id.mealChef)
 
@@ -21,7 +21,7 @@ class MealAdapter(var mealList: List<Meal>): RecyclerView.Adapter<MealAdapter.Me
             val formatter : DateTimeFormatter= DateTimeFormatter.ofPattern("H:m")
             mealTime.text = meal.mealDatetime.format(formatter)
             mealChef.text = meal.chef!!.name
-            mealImg.setImageResource(meal.imgRef.toInt())
+            mealIcon.setImageResource(meal.iconId)
         }
 
     }
