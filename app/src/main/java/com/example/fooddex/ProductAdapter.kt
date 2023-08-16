@@ -46,7 +46,7 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
 
             tvName.text = product.name
             tvPortions.text = product.getTotalAmount().toString()
-            tvPortionsInUdM.text = "${product.getTotalSize()} ${getUoMShort(product)}"
+            tvPortionsInUdM.text = "${product.getTotalSize()} ${product.getShortUnitOfMeasure()}"
             ivIcon.setImageResource(product.iconId)
 
             val daysUntilExpiration = product.getDaysUntilExpiration()
@@ -144,16 +144,7 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
             })
         }
 
-        private fun getUoMShort(product: Product): String {
-            val udMArray = itemView.resources.getStringArray(R.array.UdM)
-            val udMShortArray = itemView.resources.getStringArray(R.array.UdMShort)
-            val index = udMArray.indexOf(product.unitOfMeasure)
-            return if (index != -1 && index < udMShortArray.size) {
-                udMShortArray[index]
-            } else {
-                ""
-            }
-        }
+
 
     }
 

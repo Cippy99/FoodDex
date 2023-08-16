@@ -8,23 +8,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import kotlin.math.abs
 
 // Un adapter serve per collegare la view alla parte di dati del progetto.
 // provvede quindi all'accesso ai dati da parte della view
@@ -34,9 +25,7 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
 
         // questi campi li prende dalla view collegata
         private val recipeName: TextView = itemView.findViewById(R.id.recipeName)
-        //private val recipeCategory: TextView = itemView.findViewById(R.id.recipeCategory)
         private val recipeImg: ImageView = itemView.findViewById(R.id.RecipeIcon)
-        //private val recipeNOfPerson: TextView = itemView.findViewById(R.id.recipeNOfPerson)
         private val btnCucina: Button = itemView.findViewById(R.id.btnCucina)
         private lateinit var recipe: Recipe
 
@@ -47,7 +36,7 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
         fun bind(recipe: Recipe){
             recipeName.text = recipe.name
             //recipeCategory.text = recipe.category
-            recipeImg.setImageResource(recipe.imgRef.toInt())
+            recipeImg.setImageResource(recipe.iconId)
             //recipeNOfPerson.text = recipe.nOfPerson.toString()
         }
         init {

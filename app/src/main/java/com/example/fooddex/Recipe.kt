@@ -1,25 +1,27 @@
 package com.example.fooddex
 
+import androidx.annotation.DrawableRes
+
 class Recipe() {
     var id = "0"
     var name: String = ""
-    var imgRef: String = ""
-    var category: String = ""
-    var nOfPerson: Int = 0
-    var ingredients: MutableList<Pair<Product,Int>>? = null
-    // uso pair per associare una quantità ad ogni ngrediente all'interno della ricetta.
+    @DrawableRes
+    var iconId = R.drawable.ic_grocery
+    var category: String = "Primo"
+    var nOfPeople: Int = 0
+    var ingredients: MutableList<IngredientWithAmount> = mutableListOf()
 
     // TODO
     // - far funzionare bottone cucina
 
 
     constructor(id: String, name: String, category: String,
-                nOfPerson: Int, ingredients: MutableList<Pair<Product,Int>>) : this() {
+                nOfPeople: Int, ingredients: MutableList<IngredientWithAmount>, @DrawableRes iconId: Int) : this() {
         this.name = name
         this.id = id
-        //this.imgRef = imgRef
+        this.iconId = iconId
         this.category = category
-        this.nOfPerson = nOfPerson
+        this.nOfPeople = nOfPeople
         this.ingredients = ingredients
     }
 }
