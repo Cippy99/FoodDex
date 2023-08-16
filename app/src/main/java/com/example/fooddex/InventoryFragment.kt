@@ -2,7 +2,6 @@ package com.example.fooddex
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -84,13 +83,10 @@ class InventoryFragment : Fragment() {
                         // Add a ChildEventListener to fetch all products from the database under the familyId node
                         productsRef.addChildEventListener(object : ChildEventListener {
                             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                                Log.d("debug", "$snapshot")
                                 val product = snapshot.getValue(Product::class.java)
-                                Log.d("debug", "$product")
                                 product?.let {
                                     productList.add(it)
                                     updateRecyclerView()
-                                    Log.d("Debug", "List has now ${productList.size} elements")
                                 }
                             }
 

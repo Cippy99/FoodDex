@@ -2,7 +2,6 @@ package com.example.fooddex
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.AutoCompleteTextView
 import androidx.annotation.DrawableRes
 import androidx.recyclerview.widget.RecyclerView
@@ -143,7 +142,6 @@ class EditProductActivity : AppCompatActivity() {
                 if (familyId != null) {
                     // Create a reference to the "products" node under the FAMILY_CODE
                     if(productId.isNullOrEmpty()){
-                        Log.d("Debug", "New Product")
 
                         val productRef = dbReference.child("products").child(familyId).push()
 
@@ -156,7 +154,6 @@ class EditProductActivity : AppCompatActivity() {
                         productRef.setValue(product)
                     }
                     else{
-                        Log.d("Debug", "Product Exists")
 
                         val productRef = dbReference.child("products").child(familyId).child(productId!!)
                         val product = Product(productId!!, name, portion, udm, allExpirationDates, iconId)
@@ -166,7 +163,6 @@ class EditProductActivity : AppCompatActivity() {
                     finish()
                 } else {
                     // Handle the case when "familyId" doesn't exist in the database for the user
-                    // You can show an error message or take appropriate action
                 }
             }
 

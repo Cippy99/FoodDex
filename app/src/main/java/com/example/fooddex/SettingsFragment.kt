@@ -2,7 +2,6 @@ package com.example.fooddex
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -68,8 +67,6 @@ class SettingsFragment : Fragment() {
                     //TODO
                 }
             })
-
-            Log.d("DEBUG", "Family Id: $familyId")
 
 
         }
