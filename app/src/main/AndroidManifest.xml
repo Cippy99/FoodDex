@@ -16,6 +16,9 @@
             android:name=".EditProductActivity"
             android:exported="false" />
         <activity
+            android:name=".EditRecipeActivity"
+            android:exported="false" />
+        <activity
             android:name=".NoFamilySettingActivity"
             android:exported="false" />
         <activity

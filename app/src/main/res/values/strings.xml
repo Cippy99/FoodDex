@@ -31,10 +31,13 @@
     <string name="expiration_date">Data di scadenza</string>
     <string name="add_recipe">Aggiungi Ricetta</string>
     <string name="person">persone</string>
-    <string name="ingredients">ingredienti</string>
+    <string name="ingredients">Ingredienti</string>
     <string name="category">Categoria</string>
     <string name="cook_meal">Cucina Piatto</string>
     <string name="chef">Chef</string>
+    <string name="recipe_name">Nome Ricetta</string>
+    <string name="n_people">N° persone</string>
+    <string name="select_ingredient">Seleziona Ingrediente</string>
 
 
 </resources>
