@@ -38,6 +38,10 @@
     <string name="recipe_name">Nome Ricetta</string>
     <string name="n_people">N° persone</string>
     <string name="select_ingredient">Seleziona Ingrediente</string>
+    <string name="date_and_time">Data e Ora</string>
+    <string name="send_notification">Invia una notifica ai membri della famiglia</string>
+    <string name="time">Ora</string>
+    <string name="date">Data</string>
 
 
 </resources>

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import com.google.firebase.auth.ktx.auth
@@ -35,9 +36,13 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
         // lego i valori della view ai valori della classe Recipe
         fun bind(recipe: Recipe){
             recipeName.text = recipe.name
-            //recipeCategory.text = recipe.category
             recipeImg.setImageResource(recipe.iconId)
-            //recipeNOfPerson.text = recipe.nOfPerson.toString()
+
+            btnCucina.setOnClickListener {
+                val intent = Intent(context, CookRecipeActivity::class.java)
+                intent.putExtra("recipeId", recipe.id)
+                context.startActivity(intent)
+            }
         }
         init {
             val cardContainer: MaterialCardView = itemView.findViewById(R.id.cardContainer)
