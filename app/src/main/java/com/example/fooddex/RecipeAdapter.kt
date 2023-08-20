@@ -8,23 +8,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.color.MaterialColors
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
-import kotlin.math.abs
 
 // Un adapter serve per collegare la view alla parte di dati del progetto.
 // provvede quindi all'accesso ai dati da parte della view
@@ -34,13 +26,9 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
 
         // questi campi li prende dalla view collegata
         private val recipeName: TextView = itemView.findViewById(R.id.recipeName)
-        //private val recipeCategory: TextView = itemView.findViewById(R.id.recipeCategory)
         private val recipeImg: ImageView = itemView.findViewById(R.id.RecipeIcon)
-        //private val recipeNOfPerson: TextView = itemView.findViewById(R.id.recipeNOfPerson)
         private val btnCucina: Button = itemView.findViewById(R.id.btnCucina)
-
-        private lateinit var selectedDate: LocalDate
-        private lateinit var product: Product
+        private lateinit var recipe: Recipe
 
         val auth = Firebase.auth
         val dbReference = Firebase.database.reference
@@ -48,9 +36,13 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
         // lego i valori della view ai valori della classe Recipe
         fun bind(recipe: Recipe){
             recipeName.text = recipe.name
-            //recipeCategory.text = recipe.category
-            recipeImg.setImageResource(recipe.imgRef.toInt())
-            //recipeNOfPerson.text = recipe.nOfPerson.toString()
+            recipeImg.setImageResource(recipe.iconId)
+
+            btnCucina.setOnClickListener {
+                val intent = Intent(context, CookRecipeActivity::class.java)
+                intent.putExtra("recipeId", recipe.id)
+                context.startActivity(intent)
+            }
         }
         init {
             val cardContainer: MaterialCardView = itemView.findViewById(R.id.cardContainer)
@@ -69,7 +61,7 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
                     if (familyId != null) {
 
                         val recipeRef = dbReference.child("recipes").child(familyId)
-                        recipeRef.child(product.id).setValue(product)
+                        recipeRef.child(recipe.id).setValue(recipe)
                         notifyItemChanged(adapterPosition)
 
                     } else {
@@ -102,7 +94,7 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
     // funzione che consente di modificare il prodotto quando schiaccio.
     // da modificare per adattarla a ricetta
     fun editRecipe(position: Int){
-        val intent = Intent(context, EditProductActivity::class.java)
+        val intent = Intent(context, EditRecipeActivity::class.java)
         intent.putExtra("recipeId", recipeList[position].id)
         context.startActivity(intent)
     }

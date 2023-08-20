@@ -2,15 +2,11 @@ package com.example.fooddex
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.widget.AutoCompleteTextView
+import androidx.annotation.DrawableRes
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fooddex.databinding.ActivityEditProductBinding
 import com.example.fooddex.databinding.ActivityEditRecipeBinding
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -19,25 +15,20 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
 
 class EditRecipeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditRecipeBinding
-    private lateinit var tietCategory: TextInputEditText
-    private lateinit var tietAmount: TextInputEditText
     private lateinit var recyclerView: RecyclerView
-    private var selectedDate: LocalDate = LocalDate.now()
     private var recipeId: String? = null
-    private var allIngredients = mutableListOf<Product>()
-
-
+    private var allIngredients = mutableListOf<Pair<Product, Double>>()
+    //private val productsMap = mutableMapOf<String, Product>()
+    @DrawableRes private var iconId: Int = IconData.iconList[0].iconId
 
     private lateinit var auth: FirebaseAuth
     private lateinit var dbReference: DatabaseReference
 
+    // funzione che viene chiamata alla creazione della view dell'attività
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditRecipeBinding.inflate(layoutInflater)
@@ -46,36 +37,74 @@ class EditRecipeActivity : AppCompatActivity() {
         auth = Firebase.auth
         dbReference = Firebase.database.reference
 
-        recyclerView = binding.rvExpirations
+        binding.ivIcon.setImageResource(iconId)
 
+        recyclerView = binding.rvRecipes
         binding.topAppBar.setNavigationOnClickListener {
             finish()
         }
 
+        // salva la ricetta all'uscita dall'attività
         binding.topAppBar.setOnMenuItemClickListener{menuItem ->
             when(menuItem.itemId){
                 R.id.done ->{
                     val name = binding.tietRecipeName.text.toString()
-                    val category = binding.tietCategory.text.toString()
-                    val portion = binding.tietRecipePortion.text.toString().toInt()
-                    val udm = (binding.tilPortionUM.editText as AutoCompleteTextView).text.toString()
-                    Log.d("Debug", "Saving Product")
-                    saveRecipe(name, category, portion, udm, allIngredients)
+                    val category = (binding.tilCategory.editText as AutoCompleteTextView).text.toString()
+                    val nPeople = binding.tietNPeople.text.toString().toInt()
+
+                    val ingredients = mutableListOf<IngredientWithAmount>()
+
+                    for(ingredient in allIngredients){
+                        ingredients.add(IngredientWithAmount(ingredient.first.id, ingredient.second))
+                    }
+
+                    saveRecipe(name, category, nPeople, iconId, ingredients)
                     true
                 }
                 else -> false
             }
 
         }
+
+        //Icon Selector
+        val iconPicker = IconPickerDialog(this, IconData.sortedIconList)
+        binding.ivIcon.setOnClickListener{
+            iconPicker.show { icon ->
+                binding.ivIcon.setImageResource(icon.iconId)
+                iconId = icon.iconId
+            }
+        }
+
+        //Add Ingredient
+
+        binding.btnAddIngredient.setOnClickListener {
+            val newFragment = IngredientSelectionDialogFragment()
+            newFragment.onIngredientSelected { product, amount ->
+                allIngredients.add(Pair(product, amount))
+                //productsMap[product.id] = product
+                updateRecyclerView()
+            }
+
+            //Show fullscreen dialog
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+            transaction
+                .add(android.R.id.content, newFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+
+
         recipeId = intent.getStringExtra("recipeId")
         if(!recipeId.isNullOrEmpty()){
-            retrieveProductAndFillFields(recipeId!!)
+            retrieveRecipesAndFillFields(recipeId!!)
         }
 
 
     }
 
-    private fun retrieveProductAndFillFields(productId: String){
+    private fun retrieveRecipesAndFillFields(recipeId: String){
         val userId = auth.currentUser?.uid!!
         val userRef = dbReference.child("users").child(userId)
 
@@ -84,14 +113,36 @@ class EditRecipeActivity : AppCompatActivity() {
                 if (snapshot.exists() && snapshot.hasChild("familyId")) {
                     val familyId = snapshot.child("familyId").value as String
                     if (familyId.isNotEmpty()) {
-                        val recipeRef: DatabaseReference = dbReference.child("recipes").child(familyId).child(productId)
+                        val recipeRef: DatabaseReference = dbReference.child("recipes").child(familyId).child(recipeId)
 
                         // Add a ChildEventListener to fetch all products from the database under the familyId node
                         recipeRef.addListenerForSingleValueEvent(object: ValueEventListener{
                             override fun onDataChange(snapshot: DataSnapshot) {
                                 val recipe = snapshot.getValue(Recipe::class.java)
                                 if (recipe != null){
-                                    fillFields(recipe)
+
+                                    val productRef: DatabaseReference = dbReference.child("products").child(familyId)
+
+                                    productRef.addListenerForSingleValueEvent(object: ValueEventListener{
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            for(ingredient in recipe.ingredients){
+
+                                                val productSnapshot = snapshot.child(ingredient.productId)
+                                                val product = productSnapshot.getValue(Product::class.java)
+                                                if (product != null) {
+                                                    allIngredients.add(Pair(product, ingredient.amount))
+                                                    //productsMap[product.id] = product
+                                                }
+                                            }
+                                            fillFields(recipe)
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            TODO("Not yet implemented")
+                                        }
+
+                                    })
+
                                 }
                             }
 
@@ -117,13 +168,15 @@ class EditRecipeActivity : AppCompatActivity() {
 
     private fun fillFields(recipe: Recipe) {
         binding.tietRecipeName.setText(recipe.name)
-        binding.tietRecipePortion.setText(recipe.nOfPerson.toString())
-        (binding.tilPortionUM.editText as AutoCompleteTextView).setText("Persone", false)
-        allIngredients = recipe.ingredients!!
+        binding.tietNPeople.setText(recipe.nOfPeople.toString())
+        (binding.tilCategory.editText as AutoCompleteTextView).setText(recipe.category, false)
+        //allIngredients = recipe.ingredients
+        binding.ivIcon.setImageResource(recipe.iconId)
+        iconId = recipe.iconId
         updateRecyclerView()
     }
 
-    private fun saveRecipe(name: String, category: String, portion: Int, udm: String, allIngredients: MutableList<Product>) {
+    private fun saveRecipe(name: String, category: String, nPeople: Int, @DrawableRes icon_id: Int, allIngredients: MutableList<IngredientWithAmount>) {
         val userRef = dbReference.child("users").child(auth.currentUser?.uid!!)
 
         userRef.child("familyId").addListenerForSingleValueEvent(object : ValueEventListener {
@@ -134,30 +187,27 @@ class EditRecipeActivity : AppCompatActivity() {
                 if (familyId != null) {
                     // Create a reference to the "products" node under the FAMILY_CODE
                     if(recipeId.isNullOrEmpty()){
-                        Log.d("Debug", "New Recipe")
 
                         val recipeRef = dbReference.child("recipes").child(familyId).push()
 
                         // Get the unique ID generated by push() and set it in the product object
                         val recipeID = recipeRef.key
 
-                        val product = Recipe(recipeID!!, name, category, portion, allIngredients)
+                        val product = Recipe(recipeID!!, name, category, nPeople, allIngredients, icon_id)
 
                         // Save the product to the database using the productRef
                         recipeRef.setValue(product)
                     }
                     else{
-                        Log.d("Debug", "Recipe Exists")
 
                         val recipeRef = dbReference.child("recipes").child(familyId).child(recipeId!!)
-                        val product = Recipe(recipeId!!, name, category, portion, allIngredients)
+                        val product = Recipe(recipeId!!, name, category, nPeople, allIngredients, icon_id)
                         recipeRef.setValue(product)
                     }
 
                     finish()
                 } else {
                     // Handle the case when "familyId" doesn't exist in the database for the user
-                    // You can show an error message or take appropriate action
                 }
             }
 
@@ -167,7 +217,12 @@ class EditRecipeActivity : AppCompatActivity() {
     }
 
     private fun updateRecyclerView() {
-        // TODO
+
+        val adapter = RecipeIngredientsAdapter(allIngredients)
+
+        recyclerView.adapter = adapter
+        adapter.notifyDataSetChanged()
+
     }
 
 }

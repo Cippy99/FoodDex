@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter
 class ExpirationAdapter(val expirationList: MutableList<ExpirationDate>): RecyclerView.Adapter<ExpirationAdapter.ExpirationViewHolder>() {
 
     inner class ExpirationViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        private val tvExpiration: TextView = itemView.findViewById(R.id.tvDate)
+        private val tvExpiration: TextView = itemView.findViewById(R.id.tvText)
         private val btnDelete: Button = itemView.findViewById(R.id.btnDelete)
 
         fun bind(date: LocalDate, amount: Int){
@@ -28,7 +28,7 @@ class ExpirationAdapter(val expirationList: MutableList<ExpirationDate>): Recycl
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExpirationViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.expiration_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.text_removable_item, parent, false)
 
         return ExpirationViewHolder(view)
     }

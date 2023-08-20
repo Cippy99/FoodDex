@@ -64,4 +64,16 @@ class Product() {
         }
     }
 
+    @Exclude
+    fun getShortUnitOfMeasure(): String{
+        return when(this.unitOfMeasure.lowercase()){
+            "grammi" -> "g"
+            "litri" -> "l"
+            "pezzi" -> "pz."
+            else -> ""
+        }
+    }
+
+
+
 }

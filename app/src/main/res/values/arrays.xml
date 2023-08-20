@@ -11,4 +11,10 @@
         <item>l</item>
         <item>pz.</item>
     </string-array>
+    <string-array name="RecipeCategories">
+        <item>Primo</item>
+        <item>Secondo</item>
+        <item>Dolce</item>
+        <item>Contorno</item>
+    </string-array>
 </resources>

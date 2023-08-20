@@ -1,16 +1,14 @@
 package com.example.fooddex
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
-import com.example.fooddex.databinding.FragmentInventoryBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -20,56 +18,48 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class InventoryFragment : Fragment() {
+class IngredientSelectionDialogFragment: DialogFragment(), IngredientAmountDialogListener {
 
-    private var _binding: FragmentInventoryBinding? = null
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var rvProducts: RecyclerView
+    private lateinit var adapter: SimpleProductAdapter
     private val productList = mutableListOf<Product>()
-    private lateinit var adapter: ProductAdapter
 
-    private lateinit var dbReference: DatabaseReference
-    private lateinit var auth: FirebaseAuth
-    private val binding get() = _binding!!
+    private lateinit var callback: (product: Product, amount: Double) -> Unit
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentInventoryBinding.inflate(inflater, container, false)
-
-        return binding.root
+    fun onIngredientSelected(callback: (product: Product, amount: Double) -> Unit){
+        this.callback = callback
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.dialog_choose_product, container, false)
+        val topAppBar: MaterialToolbar = view.findViewById(R.id.topAppBar)
+        topAppBar.setNavigationOnClickListener {
+            dismiss()
+        }
 
-        auth = Firebase.auth
-        dbReference = Firebase.database.reference
-
-        recyclerView = binding.rvProducts
+        rvProducts = view.findViewById(R.id.rvProducts)
 
         val itemDecorator = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
         itemDecorator.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.rv_spacing_8dp)!!)
-        recyclerView.addItemDecoration(itemDecorator)
+        rvProducts.addItemDecoration(itemDecorator)
 
-
-        adapter = ProductAdapter(productList, requireContext())
-        recyclerView.adapter = adapter
+        adapter = SimpleProductAdapter(productList, this, requireContext())
+        rvProducts.adapter = adapter
 
         retrieveProductsFromDb()
 
-        binding.fabAddProduct.setOnClickListener {
-            val intent = Intent(activity, EditProductActivity::class.java)
-            startActivity(intent)
-        }
-
-    }
-
-    private fun updateRecyclerView() {
-        adapter.notifyDataSetChanged()
+        return view
     }
 
     private fun retrieveProductsFromDb() {
+
+        val auth = Firebase.auth
+        val dbReference = Firebase.database.reference
+
         val userId = auth.currentUser?.uid!!
         val userRef = dbReference.child("users").child(userId)
 
@@ -129,5 +119,14 @@ class InventoryFragment : Fragment() {
                 // Handle database error if needed
             }
         })
+    }
+
+    private fun updateRecyclerView() {
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun onAmountSelected(product: Product, amount: Double) {
+        callback(product, amount)
+        dismiss()
     }
 }
