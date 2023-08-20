@@ -1,8 +1,7 @@
 package com.example.fooddex
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import com.example.fooddex.databinding.FragmentMealsBinding
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,8 +9,11 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -21,12 +23,13 @@ import java.util.Calendar
 
 class MealsFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var dbReference: DatabaseReference
     private lateinit var selectedDate: LocalDate
     private var _binding: FragmentMealsBinding?= null
+    private lateinit var adapter: MealAdapter
 
     private var mealList = mutableListOf<Meal>()
     private val binding get() = _binding!!
-    private lateinit var familyCode : String
 
 
 
@@ -44,44 +47,32 @@ class MealsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        auth = FirebaseAuth.getInstance()
-        val userId = auth.currentUser!!.uid // Ottiene l'UID dell'utente correntemente autenticato
-        val dbRef = Firebase.database.reference
+        auth = Firebase.auth
+        dbReference = Firebase.database.reference
+
         selectedDate = LocalDate.now()
 
         updateTextView()
 
+        adapter = MealAdapter(mealList, requireContext())
+        binding.recyclerView.adapter = adapter
+
+        retrieveMealsFromDb()
+
+
         binding.btnDateBack.setOnClickListener{
             decreaseDate()
-            retrieveMealsFromDatabase(selectedDate, familyCode)
+            mealList.clear() // Clear the list
+            updateRecyclerView()
+            retrieveMealsFromDb()
         }
 
         binding.btnDateForward.setOnClickListener {
             increaseDate()
-            retrieveMealsFromDatabase(selectedDate, familyCode)
+            mealList.clear() // Clear the list
+            updateRecyclerView()
+            retrieveMealsFromDb()
         }
-
-
-
-        // Aggiunge un listener per un singolo valore sull'attributo "familyId" del nodo "users" relativo all'UID dell'utente corrente
-        dbRef.child("users").child(userId).child("familyId").addListenerForSingleValueEvent(object :
-            ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    familyCode = snapshot.value as String // Ottiene il codice famiglia (family code) come stringa (es. FKUVLT)
-
-                    retrieveMealsFromDatabase(selectedDate, familyCode)
-
-                } else {
-                    // Nessun nodo "familyId" trovato per l'utente corrente o il valore non esiste
-                    // Puoi gestire questo caso a seconda delle tue esigenze
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Gestisce eventuali errori verificatisi durante la lettura del valore da Firebase
-            }
-        })
 
         val datePicker = MaterialDatePicker.Builder.datePicker()
             .setTitleText("Seleziona data")
@@ -94,7 +85,9 @@ class MealsFragment : Fragment() {
             c.timeInMillis = selectedDateInMillis
             selectedDate = LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH))
             updateTextView()
-            retrieveMealsFromDatabase(selectedDate, familyCode)
+            mealList.clear() // Clear the list
+            updateRecyclerView()
+            retrieveMealsFromDb()
         }
 
         binding.tvDate.setOnClickListener{
@@ -104,40 +97,155 @@ class MealsFragment : Fragment() {
 
     private fun updateTextView() {
         val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-        binding.tvDate.setText(selectedDate.format(formatter))
+        binding.tvDate.text = selectedDate.format(formatter)
     }
 
-    // Dichiarazione della funzione retrieveMealsFromDatabase con i parametri date e familyCode
-    private fun retrieveMealsFromDatabase(date: LocalDate, familyCode: String) {
-        val dbRef = Firebase.database.reference
-        val mealsRef = dbRef.child("meals").child(familyCode).child(date.toEpochDay().toString())
+    private fun retrieveMealsFromDb() {
+        val userId = auth.currentUser?.uid!!
+        val userRef = dbReference.child("users").child(userId)
 
-        mealsRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(mealsSnapshot: DataSnapshot) {
-                if (mealsSnapshot.exists()) {
-                    mealList = mutableListOf<Meal>()
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists() && snapshot.hasChild("familyId")) {
+                    val familyId = snapshot.child("familyId").value as String
+                    if (familyId.isNotEmpty()) {
 
-                    for (mealSnapshot in mealsSnapshot.children) {
-                        val meal = mealSnapshot.getValue(Meal::class.java)
-                        meal?.let { mealList.add(it) }
+                        //Reference to meals of the selected date
+                        val mealsRef: DatabaseReference = dbReference.child("meals")
+                            .child(familyId).child(selectedDate.toEpochDay().toString())
+
+                        // Add a ChildEventListener to fetch all products from the database under the familyId node
+                        mealsRef.addChildEventListener(object : ChildEventListener {
+                            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                                val meal = snapshot.getValue(Meal::class.java)
+
+                                Log.d("debug", "Fetched Meal: $meal")
+
+                                meal?.let {
+
+                                    //Fetch Recipe
+                                    val recipeRef = dbReference.child("recipes").child(familyId).child(meal.recipeId)
+
+                                    recipeRef.addValueEventListener(object : ValueEventListener{
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            val recipe = snapshot.getValue(Recipe::class.java)
+                                            Log.d("debug", "Fetched Recipe: $recipe")
+
+                                            meal.recipe = recipe
+
+                                            // Fetch Chef Name
+                                            val chefRef = dbReference.child("users").child(meal.chefId).child("name")
+
+                                            chefRef.addValueEventListener(object: ValueEventListener{
+                                                override fun onDataChange(snapshot: DataSnapshot) {
+                                                    val chefName = snapshot.value as String
+                                                    Log.d("debug", "Fetched Chef: $chefName")
+
+                                                    meal.chefName = chefName
+
+                                                    mealList.add(it)
+                                                    updateRecyclerView()
+
+                                                }
+
+                                                override fun onCancelled(error: DatabaseError) {
+                                                    TODO("Not yet implemented")
+                                                }
+
+                                            })
+
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            TODO("Not yet implemented")
+                                        }
+
+                                    })
+                                }
+                            }
+
+                            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                                val meal = snapshot.getValue(Meal::class.java)
+                                meal?.let {
+
+                                    val recipeRef = dbReference.child("recipes").child(familyId).child(meal.recipeId)
+
+                                    recipeRef.addValueEventListener(object : ValueEventListener{
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            val recipe = snapshot.getValue(Recipe::class.java)
+                                            Log.d("debug", "Fetched Recipe: $recipe")
+
+                                            meal.recipe = recipe
+
+                                            // Fetch Chef Name
+                                            val chefRef = dbReference.child("users").child(meal.chefId).child("name")
+
+                                            chefRef.addValueEventListener(object: ValueEventListener{
+                                                override fun onDataChange(snapshot: DataSnapshot) {
+                                                    val chefName = snapshot.value as String
+                                                    Log.d("debug", "Fetched Chef: $chefName")
+
+                                                    meal.chefName = chefName
+
+                                                    val index = mealList.indexOfFirst { m -> m.id == it.id }
+                                                    if (index >= 0) {
+                                                        mealList[index] = it
+                                                        updateRecyclerView()
+                                                    }
+
+                                                }
+
+                                                override fun onCancelled(error: DatabaseError) {
+                                                    TODO("Not yet implemented")
+                                                }
+
+                                            })
+
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            TODO("Not yet implemented")
+                                        }
+
+                                    })
+
+
+
+
+                                }
+                            }
+
+                            override fun onChildRemoved(snapshot: DataSnapshot) {
+                                val meal = snapshot.getValue(Meal::class.java)
+                                meal?.let {
+                                    mealList.removeAll { m -> m.id == it.id }
+                                    updateRecyclerView()
+                                }
+                            }
+
+                            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+
+                            }
+                        })
+                    } else {
+                        // Handle the case where familyId is empty or not available
                     }
-
-                    updateRecyclerView()
-
                 } else {
-                    // Nessun pasto trovato per la data e il codice famiglia specificati
+                    // Handle the case where familyId is not available in the database
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Gestisce eventuali errori verificatisi durante la lettura dei dati da Firebase
+                // Handle database error if needed
             }
         })
     }
 
     private fun updateRecyclerView(){
-        val adapter = MealAdapter(mealList)
-        binding.recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()
 
     }

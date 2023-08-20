@@ -1,27 +1,76 @@
 package com.example.fooddex
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.time.format.DateTimeFormatter
 
-class MealAdapter(var mealList: List<Meal>): RecyclerView.Adapter<MealAdapter.MealViewHolder>() {
+class MealAdapter(var mealList: List<Meal>, var context: Context): RecyclerView.Adapter<MealAdapter.MealViewHolder>() {
 
-    class MealViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class MealViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
         private val mealName: TextView = itemView.findViewById(R.id.mealName)
         private val mealIcon: ImageView = itemView.findViewById(R.id.MealIcon)
         private val mealTime : TextView = itemView.findViewById(R.id.mealTime)
         private val mealChef : TextView = itemView.findViewById(R.id.mealChef)
+        private val btnLike: MaterialButton = itemView.findViewById(R.id.btnLike)
+        private var isLikedByCurrentUser = false
+        val auth = Firebase.auth
 
         fun bind(meal: Meal){
-            mealName.text = meal.name
             val formatter : DateTimeFormatter= DateTimeFormatter.ofPattern("H:m")
-            mealTime.text = meal.mealDatetime.format(formatter)
-            mealChef.text = meal.chef!!.name
-            mealIcon.setImageResource(meal.iconId)
+            mealTime.text = meal.getDateInLocalDateTime().format(formatter)
+
+            if (meal.recipe != null){
+                mealName.text = meal.recipe!!.name
+                mealIcon.setImageResource(meal.recipe!!.iconId)
+            }
+
+            Log.d("debug", "Updating meal chef to: ${meal.chefName}")
+            mealChef.text = meal.chefName
+
+            val userId = auth.currentUser!!.uid
+
+            isLikedByCurrentUser = meal.isLikedBy(userId)
+            btnLike.text = meal.getNumberOfLikes().toString()
+
+            btnLike.setOnClickListener {
+
+                //Add or remove user from the list
+                if(meal.isLikedBy(userId)){
+                    meal.likedBy.remove(userId)
+                }
+                else {
+                    meal.likedBy.add(userId)
+                }
+                isLikedByCurrentUser = meal.isLikedBy(userId)
+
+                updateLikes(adapterPosition)
+                notifyDataSetChanged()
+                updateLikeButton()
+            }
+
+        }
+
+        private fun updateLikeButton(){
+            if(isLikedByCurrentUser){
+                btnLike.setIconResource(R.drawable.baseline_thumb_up_alt_24)
+            }
+            else{
+                btnLike.setIconResource(R.drawable.baseline_thumb_up_off_alt_24)
+            }
         }
 
     }
@@ -40,6 +89,41 @@ class MealAdapter(var mealList: List<Meal>): RecyclerView.Adapter<MealAdapter.Me
 
     override fun getItemCount(): Int {
         return mealList.size
+    }
+
+    private fun updateLikes(position: Int){
+        val auth = Firebase.auth
+        val dbReference = Firebase.database.reference
+
+        val userId = auth.currentUser?.uid!!
+        val userRef = dbReference.child("users").child(userId)
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists() && snapshot.hasChild("familyId")) {
+                    val familyId = snapshot.child("familyId").value as String
+                    if (familyId.isNotEmpty()) {
+
+                        val mealId = mealList[position].id
+                        val mealDate = mealList[position].date.toString()
+
+                        val likesRef: DatabaseReference = dbReference.child("meals").child(familyId).child(mealDate).child(mealId).child("likedBy")
+
+                        likesRef.setValue(mealList[position].likedBy)
+
+
+                    } else {
+                        // Handle the case where familyId is empty or not available
+                    }
+                } else {
+                    // Handle the case where familyId is not available in the database
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle database error if needed
+            }
+        })
     }
 
 }
