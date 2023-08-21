@@ -79,7 +79,7 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
                 tvExpiration.setTextColor(MaterialColors.getColor(itemView, androidx.appcompat.R.attr.colorError))
             }
             else{
-                tvExpiration.setTextColor(MaterialColors.getColor(itemView, com.google.android.material.R.attr.colorOnPrimarySurface))
+                tvExpiration.setTextColor(MaterialColors.getColor(itemView, com.google.android.material.R.attr.colorOnBackground))
             }
 
             updateMinusButton()
