@@ -2,13 +2,17 @@ package com.example.fooddex
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import com.example.fooddex.databinding.ActivityNoFamilySettingBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.runBlocking
@@ -55,8 +59,8 @@ class NoFamilySettingActivity : AppCompatActivity() {
                 tilCode.error = getString(R.string.family_code_not_exists)
             }
             else{
-                //Join the family
-                //Finish Activity
+                joinFamily(auth.currentUser!!.uid, code)
+                finish()
             }
         }
 
@@ -75,11 +79,55 @@ class NoFamilySettingActivity : AppCompatActivity() {
 
                 //Assign family to user
                 dbReference.child("users").child(creatorId).child("familyId").setValue(family.id)
+
             }
         }
 
 
         setContentView(binding.root)
+    }
+
+    fun joinFamily(userId: String, familyId: String) {
+
+        // Reference to the specific family using the provided familyId
+        val membersRef = dbReference.child("families").child(familyId).child("members")
+
+        // Reference to the "users" node
+        val usersRef = dbReference.child("users").child(userId)
+
+        // Check if the family with the provided familyId exists
+        membersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    // Get the current list of members as a mutable list
+                    val currentMembers: MutableList<String> = mutableListOf()
+                    for (memberSnapshot in dataSnapshot.children) {
+                        val memberId = memberSnapshot.getValue(String::class.java)
+                        if (memberId != null) {
+                            currentMembers.add(memberId)
+                        }
+                    }
+
+                    // Add the user to the list of members
+                    currentMembers.add(userId)
+
+                    // Update the family's list of members with the new list
+                    membersRef.setValue(currentMembers)
+
+
+                } else {
+                    Log.d("debug", "Family with ID $familyId does not exist.")
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+                Log.d("debug", "Error joining family: ${databaseError.message}")
+            }
+        })
+
+        usersRef.child("familyId").setValue(familyId)
     }
 
     private suspend fun exists(code: String): Boolean {
