@@ -42,6 +42,8 @@
     <string name="send_notification">Invia una notifica ai membri della famiglia</string>
     <string name="time">Ora</string>
     <string name="date">Data</string>
+    <string name="empty_portion">La porzione non può essere vuota</string>
+    <string name="n_greater_0_error">Inserire un numero maggiore di 0</string>
 
 
 </resources>

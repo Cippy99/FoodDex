@@ -48,17 +48,19 @@ class EditRecipeActivity : AppCompatActivity() {
         binding.topAppBar.setOnMenuItemClickListener{menuItem ->
             when(menuItem.itemId){
                 R.id.done ->{
-                    val name = binding.tietRecipeName.text.toString()
-                    val category = (binding.tilCategory.editText as AutoCompleteTextView).text.toString()
-                    val nPeople = binding.tietNPeople.text.toString().toInt()
+                    if(validate()){
+                        val name = binding.tietName.text.toString()
+                        val category = (binding.tilCategory.editText as AutoCompleteTextView).text.toString()
+                        val nPeople = binding.tietNPeople.text.toString().toInt()
 
-                    val ingredients = mutableListOf<IngredientWithAmount>()
+                        val ingredients = mutableListOf<IngredientWithAmount>()
 
-                    for(ingredient in allIngredients){
-                        ingredients.add(IngredientWithAmount(ingredient.first.id, ingredient.second))
+                        for(ingredient in allIngredients){
+                            ingredients.add(IngredientWithAmount(ingredient.first.id, ingredient.second))
+                        }
+
+                        saveRecipe(name, category, nPeople, iconId, ingredients)
                     }
-
-                    saveRecipe(name, category, nPeople, iconId, ingredients)
                     true
                 }
                 else -> false
@@ -165,7 +167,7 @@ class EditRecipeActivity : AppCompatActivity() {
     }
 
     private fun fillFields(recipe: Recipe) {
-        binding.tietRecipeName.setText(recipe.name)
+        binding.tietName.setText(recipe.name)
         binding.tietNPeople.setText(recipe.nOfPeople.toString())
         (binding.tilCategory.editText as AutoCompleteTextView).setText(recipe.category, false)
         //allIngredients = recipe.ingredients
@@ -212,6 +214,27 @@ class EditRecipeActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
             }
         })
+    }
+
+    private fun validate(): Boolean {
+        //Clear errors
+        binding.tilName.error = null
+        binding.tilNPeople.error = null
+
+        val name = binding.tietName.text.toString()
+        val nPeople = binding.tietNPeople.text.toString()
+        var ok = true
+        if (name.isNullOrEmpty()){
+            ok = false
+            binding.tilName.error = getString(R.string.empty_name)
+        }
+
+        if (nPeople.isNullOrEmpty() || nPeople.toDouble() <= 0){
+            ok = false
+            binding.tilNPeople.error = getString(R.string.n_greater_0_error)
+        }
+
+        return ok
     }
 
     private fun updateRecyclerView() {

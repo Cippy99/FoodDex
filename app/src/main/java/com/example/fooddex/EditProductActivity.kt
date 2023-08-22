@@ -45,10 +45,13 @@ class EditProductActivity : AppCompatActivity() {
         binding.topAppBar.setOnMenuItemClickListener{menuItem ->
             when(menuItem.itemId){
                 R.id.done ->{
-                    val name = binding.tietName.text.toString()
-                    val portion = binding.tietPortion.text.toString().toDouble()
-                    val udm = (binding.tilPortionUM.editText as AutoCompleteTextView).text.toString()
-                    saveProduct(name, portion, udm, allExpirationDates, iconId)
+                    if(validate()){
+                        val name = binding.tietName.text.toString()
+                        val portion = binding.tietPortion.text.toString().toDouble()
+                        val udm = (binding.tilPortionUM.editText as AutoCompleteTextView).text.toString()
+                        saveProduct(name, portion, udm, allExpirationDates, iconId)
+                    }
+
                     true
                 }
                 else -> false
@@ -79,6 +82,27 @@ class EditProductActivity : AppCompatActivity() {
         if(!productId.isNullOrEmpty()){
             retrieveProductAndFillFields(productId!!)
         }
+    }
+
+    private fun validate(): Boolean {
+        //Clear errors
+        binding.tilName.error = null
+        binding.tilPortion.error = null
+
+        val name = binding.tietName.text.toString()
+        val portion = binding.tietPortion.text.toString()
+        var ok = true
+        if (name.isNullOrEmpty()){
+            ok = false
+            binding.tilName.error = getString(R.string.empty_name)
+        }
+
+        if (portion.isNullOrEmpty()){
+            ok = false
+            binding.tilPortion.error = getString(R.string.empty_portion)
+        }
+
+        return ok
     }
 
     private fun retrieveProductAndFillFields(productId: String){
