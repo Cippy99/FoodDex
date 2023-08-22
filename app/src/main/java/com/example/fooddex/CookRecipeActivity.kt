@@ -106,7 +106,7 @@ class CookRecipeActivity : AppCompatActivity() {
             Log.d("debug", "Clicked checkmark")
             when(menuItem.itemId){
                 R.id.done ->{
-                    saveMealAndNotifyFamily()
+                    saveMeal(binding.chkNotification.isChecked)
                     finish()
                     true
                 }
@@ -178,7 +178,7 @@ class CookRecipeActivity : AppCompatActivity() {
     }
 
 
-    private fun saveMealAndNotifyFamily(){
+    private fun saveMeal(notifyFamily: Boolean){
         if(recipe != null){
             val userId = auth.currentUser?.uid!!
             val userRef = dbReference.child("users").child(userId)
@@ -200,8 +200,10 @@ class CookRecipeActivity : AppCompatActivity() {
                             if (mealKey != null) {
                                 // Save Meal under the generated key
                                 mealRef.child(mealKey).setValue(meal)
+                                if(notifyFamily){
+                                    notifyFamily()
+                                }
 
-                                notifyFamily()
                             }
 
                         } else {
