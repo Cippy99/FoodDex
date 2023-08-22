@@ -149,7 +149,6 @@ class CookRecipeActivity : AppCompatActivity() {
                             }
 
                             override fun onCancelled(error: DatabaseError) {
-                                TODO("Not yet implemented")
                             }
 
                         })
@@ -265,7 +264,6 @@ class CookRecipeActivity : AppCompatActivity() {
                                                 }
                                             }
                                             override fun onCancelled(databaseError: DatabaseError) {
-                                                TODO("Not yet implemented")
                                             }
                                         })
 
@@ -273,7 +271,6 @@ class CookRecipeActivity : AppCompatActivity() {
                                 }
                             }
                             override fun onCancelled(error: DatabaseError) {
-                                TODO("Not yet implemented")
                             }
 
                         })
@@ -287,7 +284,6 @@ class CookRecipeActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
             }
 
         })
