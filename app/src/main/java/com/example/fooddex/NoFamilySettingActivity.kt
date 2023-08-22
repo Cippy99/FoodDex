@@ -49,7 +49,7 @@ class NoFamilySettingActivity : AppCompatActivity() {
         }
 
         btnJoin.setOnClickListener {
-            val code = tietCode.text.toString()
+            val code = tietCode.text.toString().uppercase()
             if(code.isNullOrEmpty()){
                 tilCode.error = getString(R.string.family_code_empty)
             }else if (code.length != 6){
@@ -92,8 +92,8 @@ class NoFamilySettingActivity : AppCompatActivity() {
         // Reference to the specific family using the provided familyId
         val membersRef = dbReference.child("families").child(familyId).child("members")
 
-        // Reference to the "users" node
-        val usersRef = dbReference.child("users").child(userId)
+        // Reference to the user
+        val userRef = dbReference.child("users").child(userId)
 
         // Check if the family with the provided familyId exists
         membersRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -127,7 +127,7 @@ class NoFamilySettingActivity : AppCompatActivity() {
             }
         })
 
-        usersRef.child("familyId").setValue(familyId)
+        userRef.child("familyId").setValue(familyId)
     }
 
     private suspend fun exists(code: String): Boolean {

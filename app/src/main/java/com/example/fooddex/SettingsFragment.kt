@@ -54,7 +54,7 @@ class SettingsFragment : Fragment() {
             val userId = auth.currentUser?.uid!!
             var familyId: String? = null
 
-            dbRef.child("users").child(userId).addValueEventListener(object: ValueEventListener{
+            dbRef.child("users").child(userId).addListenerForSingleValueEvent(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists() && snapshot.hasChild("familyId")) {
                         familyId = snapshot.child("familyId").value as String

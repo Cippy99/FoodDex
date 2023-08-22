@@ -2,6 +2,7 @@ package com.example.fooddex
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import com.example.fooddex.databinding.ActivityFamilySettingsBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -35,6 +36,12 @@ class FamilySettingsActivity : AppCompatActivity() {
         tvFamilyNumMembers = binding.tvFamilyNumMembers
 
         binding.topAppBar.setNavigationOnClickListener {
+            finish()
+        }
+
+        binding.btnLeave.setOnClickListener {
+            leaveFamily(auth.currentUser!!.uid)
+            //val intent = Intent(this, MainActivity::class.java)
             finish()
         }
 
@@ -81,6 +88,62 @@ class FamilySettingsActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
                 callback(null)
             }
+        })
+    }
+
+    private fun leaveFamily(userId: String) {
+        // Reference to the user
+        val userRef = dbReference.child("users").child(userId)
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                val familyId = snapshot.child("familyId").getValue(String::class.java)
+
+                if(familyId != null){
+                    //Reference to family members
+                    val membersRef = dbReference.child("families").child(familyId).child("members")
+
+                    membersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+
+                                // Get the current list of members as a mutable list
+                                val currentMembers: MutableList<String> = mutableListOf()
+                                for (memberSnapshot in dataSnapshot.children) {
+                                    val memberId = memberSnapshot.getValue(String::class.java)
+                                    if (memberId != null) {
+                                        currentMembers.add(memberId)
+                                    }
+                                }
+                                // Remove the user to the list of members
+                                currentMembers.remove(userId)
+
+                                // Update the family's list of members with the new list
+                                membersRef.setValue(currentMembers)
+
+                                //Remove familyId from user
+                                userRef.child("familyId").removeValue()
+
+
+                            } else {
+                                Log.d("debug", "Family with ID $familyId does not exist.")
+                            }
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            // Handle error
+                            Log.d("debug", "Error leaving family: ${databaseError.message}")
+                        }
+                    })
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
         })
     }
 }
