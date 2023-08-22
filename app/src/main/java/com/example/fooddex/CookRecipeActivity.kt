@@ -3,7 +3,6 @@ package com.example.fooddex
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.AutoCompleteTextView
 import com.example.fooddex.databinding.ActivityCookRecipeBinding
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -16,7 +15,17 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
@@ -28,6 +37,8 @@ class CookRecipeActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var dbReference: DatabaseReference
+    private val client = OkHttpClient()
+    private val key = "AAAA2aoRqwk:APA91bFGtBQyYLp6CgBqZYyfSXJt4AR2nAs7_zQpz14lWykfvdadyw3yAWgFC5zxA-wnCbKBSSejSM1h07EYaEaOdAig5p1DZ32c8C-Rj5p3KmIKBp900Sanf53ggJCWcUQ11AdrH5Tz"
 
     private var recipe: Recipe? = null
 
@@ -95,7 +106,7 @@ class CookRecipeActivity : AppCompatActivity() {
             Log.d("debug", "Clicked checkmark")
             when(menuItem.itemId){
                 R.id.done ->{
-                    saveMeal()
+                    saveMealAndNotifyFamily()
                     finish()
                     true
                 }
@@ -168,7 +179,7 @@ class CookRecipeActivity : AppCompatActivity() {
     }
 
 
-    private fun saveMeal(){
+    private fun saveMealAndNotifyFamily(){
         if(recipe != null){
             val userId = auth.currentUser?.uid!!
             val userRef = dbReference.child("users").child(userId)
@@ -190,6 +201,8 @@ class CookRecipeActivity : AppCompatActivity() {
                             if (mealKey != null) {
                                 // Save Meal under the generated key
                                 mealRef.child(mealKey).setValue(meal)
+
+                                notifyFamily()
                             }
 
                         } else {
@@ -206,4 +219,114 @@ class CookRecipeActivity : AppCompatActivity() {
             })
         }
     }
+
+    private fun notifyFamily() {
+        Log.d("Notification", "Notifying Family")
+        val title = "Nuovo pasto programmato"
+
+        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yy")
+        val body = if (recipe != null) "${recipe!!.name} il giorno ${selectedDateTime.format(formatter)} " +
+                "alle ${selectedDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))}" else ""
+
+        val currentUser = auth.currentUser!!.uid
+        val userRef = dbReference.child("users").child(currentUser)
+
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists() && snapshot.hasChild("familyId")) {
+                    val familyId = snapshot.child("familyId").value as String
+                    if (familyId.isNotEmpty()) {
+
+                        val familyRef = dbReference.child("families").child(familyId)
+
+                        familyRef.addListenerForSingleValueEvent(object : ValueEventListener{
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                Log.d("Notification", "Fetched family: $snapshot")
+                                val family = snapshot.getValue(Family::class.java)
+
+                                if (family != null){
+                                    for (member in family.members){
+
+                                        //Don't send Notification if to the user who made the meal
+                                        if(member == currentUser){
+                                            continue
+                                            Log.d("Notification", "Skipping user $member")
+                                        }
+
+                                        val tokensRef = dbReference.child("fcm_tokens").child(member)
+
+                                        tokensRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                                for (tokenSnapshot in dataSnapshot.children) {
+                                                    val token = tokenSnapshot.getValue(String::class.java)
+                                                    if (token != null) {
+                                                        sendNotificationToDevice(token, title, body)
+                                                    }
+                                                }
+                                            }
+                                            override fun onCancelled(databaseError: DatabaseError) {
+                                                TODO("Not yet implemented")
+                                            }
+                                        })
+
+                                }
+                                }
+                            }
+                            override fun onCancelled(error: DatabaseError) {
+                                TODO("Not yet implemented")
+                            }
+
+                        })
+
+                    } else {
+                        // Handle the case where familyId is empty or not available
+                    }
+                } else {
+                    // Handle the case where familyId is not available in the database
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+
+    }
+
+    private fun sendNotificationToDevice(token: String, title:String, body: String, data: Map<String, String> = emptyMap()){
+        val url = "https://fcm.googleapis.com/fcm/send"
+
+        val bodyJson = JSONObject()
+        bodyJson.put("to", token)
+        bodyJson.put("notification",
+            JSONObject().also {
+                it.put("title", title)
+                it.put("body", body)
+            }
+        )
+        bodyJson.put("data", JSONObject(data))
+
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Content-Type", "application/json")
+            .addHeader("Authorization", "key=$key")
+            .post(
+                bodyJson.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+            )
+            .build()
+
+        client.newCall(request).enqueue(object : Callback{
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("FCM API", e.message.toString())
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                Log.d("FCM API","Received data: ${response.body?.string()}")
+            }
+
+        })
+    }
+
 }

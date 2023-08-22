@@ -3,13 +3,19 @@ package com.example.fooddex
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import com.example.fooddex.databinding.ActivityLoginBinding
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 
 class Login : AppCompatActivity() {
@@ -62,6 +68,7 @@ class Login : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful){
+                        getFCMTokenAndRegister()
                         goToMainActivity()
                     }
                     else{
@@ -70,6 +77,44 @@ class Login : AppCompatActivity() {
                 }
         }
 
+    }
+
+    private fun getFCMTokenAndRegister(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener{ task ->
+            if(task.isSuccessful){
+                var token = task.result
+                Log.d("My Token", token)
+                registerFCMToken(token)
+            }
+        }
+    }
+
+    private fun registerFCMToken(token: String) {
+        val dbRef = Firebase.database.reference
+
+        val uid = auth.currentUser!!.uid
+
+        val userFcmTokenRef = dbRef.child("fcm_tokens").child(uid)
+
+        userFcmTokenRef.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val tokenExists = snapshot.children.any { it.getValue(String::class.java) == token}
+
+                if(!tokenExists){
+                    // Push a new FCM token to the user's tokens
+                    val newTokenRef = userFcmTokenRef.push()
+
+                    // Set the FCM token value
+                    newTokenRef.setValue(token)
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 
     private fun clearErrors() {
