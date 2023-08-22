@@ -30,7 +30,7 @@ class MealAdapter(var mealList: List<Meal>, var context: Context): RecyclerView.
         val auth = Firebase.auth
 
         fun bind(meal: Meal){
-            val formatter : DateTimeFormatter= DateTimeFormatter.ofPattern("H:m")
+            val formatter : DateTimeFormatter= DateTimeFormatter.ofPattern("HH:mm")
             mealTime.text = meal.getDateInLocalDateTime().format(formatter)
 
             if (meal.recipe != null){
