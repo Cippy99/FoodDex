@@ -2,6 +2,7 @@ package com.example.fooddex
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -22,10 +23,13 @@ class RecipesFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private var _binding: FragmentRecipesBinding?= null
     private var recipesList = mutableListOf<Recipe>()
+    private var filteredRecipesList = mutableListOf<Recipe>()
     private var productList = mutableListOf<Product>()
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RecipeAdapter
     private lateinit var dbref: DatabaseReference
+
+    private var filters =  mutableMapOf<String, Boolean>()
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -44,14 +48,21 @@ class RecipesFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         dbref = Firebase.database.reference
 
+        resetFilters()
+        filteredRecipesList.addAll(recipesList)
+
         val itemDecorator = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        itemDecorator.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.rv_spacing_8dp)!!)
+        itemDecorator.setDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.rv_spacing_8dp
+            )!!
+        )
 
         recyclerView = binding.rvRecipes
         recyclerView.addItemDecoration(itemDecorator)
 
-
-        adapter = RecipeAdapter(recipesList, requireContext())
+        adapter = RecipeAdapter(filteredRecipesList, requireContext())
         recyclerView.adapter = adapter
 
         retrieveRecipesAndProductsFromDb()
@@ -62,6 +73,18 @@ class RecipesFragment : Fragment() {
             startActivity(intent)
         }
 
+        //Filter Dialog
+        binding.btnFilter.setOnClickListener {
+            val filterDialog = FilterDialog(
+                requireActivity(),
+                {f -> filters = f.toMutableMap()
+                    filterListAndUpdateRecyclerView()},
+                {resetFilters()
+                    filterListAndUpdateRecyclerView()},
+                filters)
+
+            filterDialog.show()
+        }
     }
 
     // importa le ricette dal db
@@ -85,7 +108,7 @@ class RecipesFragment : Fragment() {
                                 val recipe = snapshot.getValue(Recipe::class.java)
                                 recipe?.let {
                                     recipesList.add(it)
-                                    updateRecyclerView()
+                                    filterListAndUpdateRecyclerView()
                                 }
                             }
 
@@ -95,7 +118,7 @@ class RecipesFragment : Fragment() {
                                     val index = recipesList.indexOfFirst { p -> p.id == it.id }
                                     if (index >= 0) {
                                         recipesList[index] = it
-                                        updateRecyclerView()
+                                        filterListAndUpdateRecyclerView()
                                     }
                                 }
                             }
@@ -104,7 +127,7 @@ class RecipesFragment : Fragment() {
                                 val recipe = snapshot.getValue(Recipe::class.java)
                                 recipe?.let {
                                     recipesList.removeAll { p -> p.id == it.id }
-                                    updateRecyclerView()
+                                    filterListAndUpdateRecyclerView()
                                 }
                             }
 
@@ -126,7 +149,7 @@ class RecipesFragment : Fragment() {
                                 val product = snapshot.getValue(Product::class.java)
                                 product?.let {
                                     productList.add(it)
-                                    updateRecyclerView()
+                                    filterListAndUpdateRecyclerView()
                                 }
                             }
 
@@ -136,7 +159,7 @@ class RecipesFragment : Fragment() {
                                     val index = productList.indexOfFirst { p -> p.id == it.id }
                                     if (index >= 0) {
                                         productList[index] = it
-                                        updateRecyclerView()
+                                        filterListAndUpdateRecyclerView()
                                     }
                                 }
                             }
@@ -145,7 +168,7 @@ class RecipesFragment : Fragment() {
                                 val product = snapshot.getValue(Product::class.java)
                                 product?.let {
                                     productList.removeAll { p -> p.id == it.id }
-                                    updateRecyclerView()
+                                    filterListAndUpdateRecyclerView()
                                 }
                             }
 
@@ -175,6 +198,29 @@ class RecipesFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
+    private fun resetFilters() {
+        filters["Primo"] = true
+        filters["Secondo"] = true
+        filters["Contorno"] = true
+        filters["Dolce"] = true
+    }
+
+    private fun filterListAndUpdateRecyclerView(){
+        Log.d("Filter", "Filtering list")
+        filters.forEach { (key, value) ->
+            Log.d("Filter", "$key: $value")
+        }
+        filteredRecipesList.clear()
+        for(recipe in recipesList){
+            if(filters[recipe.category] == true){
+                filteredRecipesList.add(recipe)
+            }
+        }
+
+        updateRecyclerView()
+    }
+
 
 
 }
+
