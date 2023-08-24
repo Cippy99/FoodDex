@@ -1,6 +1,7 @@
 package com.example.fooddex
 
 import androidx.annotation.DrawableRes
+import com.google.firebase.database.Exclude
 
 class Recipe() {
     var id = "0"
@@ -10,6 +11,8 @@ class Recipe() {
     var category: String = "Primo"
     var nOfPeople: Int = 0
     var ingredients: MutableList<IngredientWithAmount> = mutableListOf()
+    @Exclude
+    var canBeCooked: Boolean = true
 
     // TODO
     // - far funzionare bottone cucina
@@ -24,4 +27,18 @@ class Recipe() {
         this.nOfPeople = nOfPeople
         this.ingredients = ingredients
     }
+
+    fun canBeCooked(inventory: List<Product>): Boolean {
+        for (ingredient in ingredients) {
+            // Find the product in the inventory that matches the ingredient's productId
+            val matchingProduct = inventory.find { product -> product.id == ingredient.productId }
+
+            if (matchingProduct == null || matchingProduct.getTotalSize() < ingredient.amount) {
+                return false
+            }
+        }
+
+        return true
+    }
+
 }

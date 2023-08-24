@@ -1,5 +1,6 @@
 package com.example.fooddex
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -11,6 +12,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -34,15 +37,38 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
         val dbReference = Firebase.database.reference
 
         // lego i valori della view ai valori della classe Recipe
+
         fun bind(recipe: Recipe){
+            this.recipe = recipe
             recipeName.text = recipe.name
             recipeImg.setImageResource(recipe.iconId)
 
             btnCucina.setOnClickListener {
-                val intent = Intent(context, CookRecipeActivity::class.java)
-                intent.putExtra("recipeId", recipe.id)
-                context.startActivity(intent)
+
+                if(recipe.canBeCooked){
+                    startActivityCookRecipe()
+                }
+                else{
+                    MaterialAlertDialogBuilder(context)
+                        .setTitle("Ingredienti insufficienti")
+                        .setMessage("Alcuni ingredienti necessari per cucinare la ricetta " +
+                                "non sono presenti nel tuo inventario. Cucinare comunque?")
+                        .setPositiveButton("Cucina"){ _, _ ->
+                            startActivityCookRecipe()}
+                        .setNegativeButton("Cancella", null)
+                        .show()
+                }
+
+
             }
+
+
+        }
+
+        private fun startActivityCookRecipe(){
+            val intent = Intent(context, CookRecipeActivity::class.java)
+            intent.putExtra("recipeId", recipe.id)
+            context.startActivity(intent)
         }
         init {
             val cardContainer: MaterialCardView = itemView.findViewById(R.id.cardContainer)
@@ -50,29 +76,6 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
             cardContainer.setOnClickListener {
                 editRecipe(adapterPosition)
             }
-        }
-        private fun updateProduct(){
-            val userRef = dbReference.child("users").child(auth.currentUser?.uid!!)
-
-            userRef.child("familyId").addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val familyId = snapshot.getValue(String::class.java)
-
-                    if (familyId != null) {
-
-                        val recipeRef = dbReference.child("recipes").child(familyId)
-                        recipeRef.child(recipe.id).setValue(recipe)
-                        notifyItemChanged(adapterPosition)
-
-                    } else {
-                        // Handle the case when "familyId" doesn't exist in the database for the user
-                        // You can show an error message or take appropriate action
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                }
-            })
         }
     }
 

@@ -107,6 +107,7 @@ class RecipesFragment : Fragment() {
                             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                                 val recipe = snapshot.getValue(Recipe::class.java)
                                 recipe?.let {
+                                    it.canBeCooked = it.canBeCooked(productList)
                                     recipesList.add(it)
                                     filterListAndUpdateRecyclerView()
                                 }
@@ -117,6 +118,7 @@ class RecipesFragment : Fragment() {
                                 recipe?.let {
                                     val index = recipesList.indexOfFirst { p -> p.id == it.id }
                                     if (index >= 0) {
+                                        it.canBeCooked = it.canBeCooked(productList)
                                         recipesList[index] = it
                                         filterListAndUpdateRecyclerView()
                                     }
@@ -149,6 +151,7 @@ class RecipesFragment : Fragment() {
                                 val product = snapshot.getValue(Product::class.java)
                                 product?.let {
                                     productList.add(it)
+                                    updateCanBeCooked()
                                     filterListAndUpdateRecyclerView()
                                 }
                             }
@@ -159,6 +162,7 @@ class RecipesFragment : Fragment() {
                                     val index = productList.indexOfFirst { p -> p.id == it.id }
                                     if (index >= 0) {
                                         productList[index] = it
+                                        updateCanBeCooked()
                                         filterListAndUpdateRecyclerView()
                                     }
                                 }
@@ -168,6 +172,7 @@ class RecipesFragment : Fragment() {
                                 val product = snapshot.getValue(Product::class.java)
                                 product?.let {
                                     productList.removeAll { p -> p.id == it.id }
+                                    updateCanBeCooked()
                                     filterListAndUpdateRecyclerView()
                                 }
                             }
@@ -218,6 +223,12 @@ class RecipesFragment : Fragment() {
         }
 
         updateRecyclerView()
+    }
+
+    private fun updateCanBeCooked(){
+        recipesList.forEach { recipe ->
+            recipe.canBeCooked = recipe.canBeCooked(productList)
+        }
     }
 
 

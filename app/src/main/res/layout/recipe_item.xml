@@ -53,11 +53,9 @@
 
                 <Button
                     android:id="@+id/btnCucina"
-                    style="?attr/materialIconButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cucina"
-                    app:icon="@drawable/baseline_add_24" />
+                    android:text="Cucina" />
 
             </LinearLayout>
 

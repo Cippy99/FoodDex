@@ -242,6 +242,7 @@ class MealsFragment : Fragment() {
     }
 
     private fun updateRecyclerView(){
+        mealList.sortBy { it.time }
         adapter.notifyDataSetChanged()
 
     }
