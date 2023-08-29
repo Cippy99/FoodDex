@@ -19,7 +19,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import kotlin.random.Random
 
-class NoFamilySettingActivity : AppCompatActivity() {
+class NoFamilySettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNoFamilySettingBinding
     private lateinit var tietCode: TextInputEditText

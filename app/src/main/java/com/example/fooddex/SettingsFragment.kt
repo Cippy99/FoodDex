@@ -63,7 +63,7 @@ class SettingsFragment : Fragment() {
                     val intent = if(!familyId.isNullOrEmpty()){
                         Intent(activity, FamilySettingsActivity::class.java)
                     } else{
-                        Intent(activity, NoFamilySettingActivity::class.java)
+                        Intent(activity, NoFamilySettingsActivity::class.java)
                     }
 
                     startActivity(intent)

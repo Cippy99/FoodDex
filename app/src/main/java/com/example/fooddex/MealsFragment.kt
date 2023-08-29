@@ -195,19 +195,12 @@ class MealsFragment : Fragment() {
 
                                                 override fun onCancelled(error: DatabaseError) {
                                                 }
-
                                             })
-
                                         }
 
                                         override fun onCancelled(error: DatabaseError) {
                                         }
-
                                     })
-
-
-
-
                                 }
                             }
 

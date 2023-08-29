@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_message_received"
+        android:layout_gravity="left"
+        android:layout_marginRight="90dp">
+
+        <TextView
+            android:id="@+id/tvSenderName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"
+            android:text="Sender Name"
+            android:textColor="?attr/colorTertiary"
+            android:textAppearance="?attr/textAppearanceLabelLarge"
+            />
+
+        <TextView
+            android:id="@+id/tvMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Messaggio molto lungo per vedere se va a capo correttamente"
+            app:layout_constraintTop_toBottomOf="@id/tvSenderName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvTime"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:lineHeight="20dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="?attr/colorOnTertiaryContainer"/>
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="12:50"
+            android:textColor="?attr/colorOnTertiaryContainer"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+</LinearLayout>

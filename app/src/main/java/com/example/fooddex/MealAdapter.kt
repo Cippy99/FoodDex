@@ -1,9 +1,11 @@
 package com.example.fooddex
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +28,7 @@ class MealAdapter(var mealList: List<Meal>, var context: Context): RecyclerView.
         private val mealTime : TextView = itemView.findViewById(R.id.mealTime)
         private val mealChef : TextView = itemView.findViewById(R.id.mealChef)
         private val btnLike: MaterialButton = itemView.findViewById(R.id.btnLike)
+        private val btnChat: Button = itemView.findViewById(R.id.btnChat)
         private var isLikedByCurrentUser = false
         val auth = Firebase.auth
 
@@ -60,6 +63,12 @@ class MealAdapter(var mealList: List<Meal>, var context: Context): RecyclerView.
                 updateLikes(adapterPosition)
                 notifyDataSetChanged()
                 updateLikeButton()
+            }
+
+            btnChat.setOnClickListener {
+                val intent = Intent(context, ChatActivity::class.java)
+                intent.putExtra("chatId", "${meal.date}${meal.id}")
+                context.startActivity(intent)
             }
 
         }
