@@ -2,6 +2,7 @@ package com.example.fooddex
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class SettingsFragment : Fragment() {
 
@@ -41,11 +43,10 @@ class SettingsFragment : Fragment() {
         retireveAndSetUsername()
 
         binding.btnLogout.setOnClickListener {
-            val intent = Intent(activity, Login::class.java)
-            auth.signOut()
-            startActivity(intent)
+
+            unregisterFCMToken(auth.currentUser!!.uid)
             //Maybe call back activity and let it decide if t should close itself (maybe displaying a dialog)
-            activity?.finish()
+
         }
 
         binding.btnFamily.setOnClickListener {
@@ -75,6 +76,39 @@ class SettingsFragment : Fragment() {
             })
 
 
+        }
+    }
+
+    private fun unregisterFCMToken(uid: String) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener{ task ->
+            if(task.isSuccessful){
+                var token = task.result
+                Log.d("My Token", token)
+
+                val query = dbRef.child("fcm_tokens").child(uid).orderByValue().equalTo(token)
+
+                query.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        for (childSnapshot in snapshot.children) {
+                            // Remove the token from the database
+                            Log.d("TOKEN", "$childSnapshot")
+                            childSnapshot.ref.removeValue()
+                        }
+                        val intent = Intent(activity, Login::class.java)
+                        auth.signOut()
+                        startActivity(intent)
+                        activity?.finish()
+
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                    }
+
+                })
+
+
+
+            }
         }
     }
 
