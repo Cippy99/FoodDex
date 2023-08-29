@@ -16,18 +16,15 @@
             android:name=".ChatActivity"
             android:exported="false"
             android:windowSoftInputMode = "adjustResize"/>
-        <!--
-     Set custom default icon. This is used when no icon is set for incoming notification messages.
-     See README(https://goo.gl/l4GJaQ) for more.
-        -->
-        <!--
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_stat_ic_notification" />
 
         <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"/>
-        -->
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logo" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/material_dynamic_primary100"/>
+
         <activity
             android:name=".CookRecipeActivity"
             android:exported="false" />
