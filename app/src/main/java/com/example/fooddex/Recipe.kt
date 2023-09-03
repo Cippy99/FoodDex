@@ -13,6 +13,8 @@ class Recipe() {
     var ingredients: MutableList<IngredientWithAmount> = mutableListOf()
     @Exclude
     var canBeCooked: Boolean = true
+    @Exclude
+    var missingIngredients: List<Product> = listOf()
 
     // TODO
     // - far funzionare bottone cucina
@@ -39,6 +41,19 @@ class Recipe() {
         }
 
         return true
+    }
+
+    fun missingIngredients(inventory: List<Product>): List<Product>{
+        var missingIngredients = mutableListOf<Product>()
+        for (ingredient in ingredients) {
+            // Find the product in the inventory that matches the ingredient's productId
+            val matchingProduct = inventory.find { product -> product.id == ingredient.productId }!!
+
+            if (matchingProduct.getTotalSize() < ingredient.amount) {
+                missingIngredients.add(matchingProduct)
+            }
+        }
+        return missingIngredients
     }
 
 }

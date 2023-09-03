@@ -108,6 +108,7 @@ class RecipesFragment : Fragment() {
                                 val recipe = snapshot.getValue(Recipe::class.java)
                                 recipe?.let {
                                     it.canBeCooked = it.canBeCooked(productList)
+                                    it.missingIngredients = it.missingIngredients(productList)
                                     recipesList.add(it)
                                     filterListAndUpdateRecyclerView()
                                 }
@@ -119,6 +120,7 @@ class RecipesFragment : Fragment() {
                                     val index = recipesList.indexOfFirst { p -> p.id == it.id }
                                     if (index >= 0) {
                                         it.canBeCooked = it.canBeCooked(productList)
+                                        it.missingIngredients = it.missingIngredients(productList)
                                         recipesList[index] = it
                                         filterListAndUpdateRecyclerView()
                                     }
@@ -228,6 +230,7 @@ class RecipesFragment : Fragment() {
     private fun updateCanBeCooked(){
         recipesList.forEach { recipe ->
             recipe.canBeCooked = recipe.canBeCooked(productList)
+            recipe.missingIngredients = recipe.missingIngredients(productList)
         }
     }
 

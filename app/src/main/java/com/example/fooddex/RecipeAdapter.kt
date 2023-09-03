@@ -49,20 +49,24 @@ class RecipeAdapter(val recipeList: MutableList<Recipe>, val context: Context): 
                     startActivityCookRecipe()
                 }
                 else{
+                    var message = "Alcuni ingredienti necessari per cucinare la ricetta" +
+                            "non sono presenti nel tuo inventario:\n"
+
+                    for(product in recipe.missingIngredients){
+                        message += "- ${product.name}\n"
+                    }
+
+                    message += "Cucinare comunque?"
+
                     MaterialAlertDialogBuilder(context)
                         .setTitle("Ingredienti insufficienti")
-                        .setMessage("Alcuni ingredienti necessari per cucinare la ricetta " +
-                                "non sono presenti nel tuo inventario. Cucinare comunque?")
+                        .setMessage(message)
                         .setPositiveButton("Cucina"){ _, _ ->
                             startActivityCookRecipe()}
                         .setNegativeButton("Cancella", null)
                         .show()
                 }
-
-
             }
-
-
         }
 
         private fun startActivityCookRecipe(){
