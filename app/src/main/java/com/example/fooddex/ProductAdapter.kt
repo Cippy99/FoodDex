@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 import kotlin.math.abs
 
 
-class ProductAdapter(val productList: MutableList<Product>, val context: Context): RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
+class ProductAdapter(var productList: MutableList<Product>, val context: Context): RecyclerView.Adapter<ProductAdapter.ProductViewHolder>() {
 
     inner class ProductViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
@@ -167,5 +167,10 @@ class ProductAdapter(val productList: MutableList<Product>, val context: Context
         val intent = Intent(context, EditProductActivity::class.java)
         intent.putExtra("productId", productList[position].id)
         context.startActivity(intent)
+    }
+
+    fun setFilteredList(filteredList: MutableList<Product>) {
+        productList = filteredList
+        notifyDataSetChanged()
     }
 }

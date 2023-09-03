@@ -6,6 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import android.widget.SearchView.OnQueryTextListener
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -63,6 +66,32 @@ class InventoryFragment : Fragment() {
             startActivity(intent)
         }
 
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterProducts(newText)
+                return true
+            }
+
+        })
+
+    }
+
+    private fun filterProducts(query: String?) {
+        if(query != null){
+            val filteredList = mutableListOf<Product>()
+            for(p in productList){
+                if(p.name.lowercase().contains(query.lowercase())){
+                    filteredList.add(p)
+                }
+            }
+
+            adapter.setFilteredList(filteredList)
+
+        }
     }
 
     private fun updateRecyclerView() {
