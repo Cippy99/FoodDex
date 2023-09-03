@@ -79,6 +79,7 @@ class NoFamilySettingsActivity : AppCompatActivity() {
 
                 //Assign family to user
                 dbReference.child("users").child(creatorId).child("familyId").setValue(family.id)
+                finish()
 
             }
         }
