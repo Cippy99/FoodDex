@@ -152,6 +152,7 @@ class EditProductActivity : AppCompatActivity() {
         allExpirationDates = product.expirations
         binding.ivIcon.setImageResource(product.iconId)
         iconId = product.iconId
+        binding.topAppBar.title = product.name
         updateRecyclerView()
     }
 

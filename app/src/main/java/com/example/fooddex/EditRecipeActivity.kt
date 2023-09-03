@@ -173,6 +173,7 @@ class EditRecipeActivity : AppCompatActivity() {
         //allIngredients = recipe.ingredients
         binding.ivIcon.setImageResource(recipe.iconId)
         iconId = recipe.iconId
+        binding.topAppBar.title = recipe.name
         updateRecyclerView()
     }
 
