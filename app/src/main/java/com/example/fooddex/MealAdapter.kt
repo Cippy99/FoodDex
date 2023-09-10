@@ -29,6 +29,7 @@ class MealAdapter(var mealList: List<Meal>, var context: Context): RecyclerView.
         private val mealChef : TextView = itemView.findViewById(R.id.mealChef)
         private val btnLike: MaterialButton = itemView.findViewById(R.id.btnLike)
         private val btnChat: Button = itemView.findViewById(R.id.btnChat)
+        private val btnChangeRecipe: Button = itemView.findViewById(R.id.btnChangeRecipe)
         private var isLikedByCurrentUser = false
         val auth = Firebase.auth
 
@@ -70,6 +71,17 @@ class MealAdapter(var mealList: List<Meal>, var context: Context): RecyclerView.
                 intent.putExtra("chatId", "${meal.date}${meal.id}")
                 context.startActivity(intent)
             }
+
+            btnChangeRecipe.isEnabled = meal.chefId == auth.currentUser!!.uid
+
+            btnChangeRecipe.setOnClickListener {
+                val intent = Intent(context, ChangeMealRecipeActivity::class.java)
+                intent.putExtra("recipeId", meal.recipeId)
+                intent.putExtra("mealId", meal.id)
+                intent.putExtra("mealDate", meal.date.toString())
+                context.startActivity(intent)
+            }
+
 
         }
 

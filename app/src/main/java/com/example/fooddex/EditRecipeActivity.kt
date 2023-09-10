@@ -22,7 +22,6 @@ class EditRecipeActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private var recipeId: String? = null
     private var allIngredients = mutableListOf<Pair<Product, Double>>()
-    //private val productsMap = mutableMapOf<String, Product>()
     @DrawableRes private var iconId: Int = IconData.iconList[0].iconId
 
     private lateinit var auth: FirebaseAuth
@@ -83,7 +82,6 @@ class EditRecipeActivity : AppCompatActivity() {
             val newFragment = IngredientSelectionDialogFragment()
             newFragment.onIngredientSelected { product, amount ->
                 allIngredients.add(Pair(product, amount))
-                //productsMap[product.id] = product
                 updateRecyclerView()
             }
 

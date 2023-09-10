@@ -14,7 +14,7 @@ class SimpleProductAdapter(private val productList: MutableList<Product>, privat
     inner class SimpleProductViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
         private val tvName: TextView = itemView.findViewById(R.id.tvName)
-        private val ivIcon: ImageView = itemView.findViewById(R.id.ivProductIcon)
+        private val ivIcon: ImageView = itemView.findViewById(R.id.ivItemIcon)
 
         private lateinit var product: Product
 
@@ -46,7 +46,7 @@ class SimpleProductAdapter(private val productList: MutableList<Product>, privat
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SimpleProductViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.simple_product_card_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.simple_item_card_item, parent, false)
 
         return SimpleProductViewHolder(view)
     }

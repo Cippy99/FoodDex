@@ -16,9 +16,6 @@ class Recipe() {
     @Exclude
     var missingIngredients: List<Product> = listOf()
 
-    // TODO
-    // - far funzionare bottone cucina
-
 
     constructor(id: String, name: String, category: String,
                 nOfPeople: Int, ingredients: MutableList<IngredientWithAmount>, @DrawableRes iconId: Int) : this() {

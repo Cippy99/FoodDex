@@ -35,7 +35,7 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
         )
 
         var builder: NotificationCompat.Builder = NotificationCompat.Builder(applicationContext, channelId)
-            .setSmallIcon(R.drawable.ic_lemon)
+            .setSmallIcon(R.drawable.logo)
             .setAutoCancel(true)
             .setVibrate(longArrayOf(1000, 1000, 1000, 1000))
             .setOnlyAlertOnce(true)

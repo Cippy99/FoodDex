@@ -102,6 +102,15 @@
                     android:layout_marginEnd="16dp">
 
                     <Button
+                        android:id="@+id/btnChangeRecipe"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        style="?attr/materialIconButtonFilledStyle"
+                        app:icon="@drawable/baseline_change_24"
+                        android:enabled="false"/>
+
+                    <Button
                         android:id="@+id/btnLike"
                         style="@style/Widget.Material3.Button.Icon"
                         android:layout_width="wrap_content"

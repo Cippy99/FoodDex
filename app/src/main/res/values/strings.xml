@@ -45,6 +45,7 @@
     <string name="empty_portion">La porzione non può essere vuota</string>
     <string name="n_greater_0_error">Inserire un numero maggiore di 0</string>
     <string name="filters">Filtri</string>
+    <string name="change_recipe">Cambia Ricetta\n</string>
 
 
 </resources>
