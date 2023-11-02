@@ -1,8 +1,9 @@
 # FoodDex
 
-This project was part of the Exam for the course of Mobile Programming at th University of Brescia.
+This project was part of the Exam for the course of Mobile Programming at University of Brescia.
 
 FoodDex is an app that helps you keep track of the food in your pantry/fridge.
+Developed in Kotlin using Android Studio.
 
 Features
 ---
